@@ -53,6 +53,8 @@
 
     @keyframes slideFade { to { opacity: 1; } }
     @keyframes itemSlideUp { to { opacity: 1; transform: translateY(0); } }
+    .cycle-progress-sweep { background: linear-gradient(90deg, transparent, rgba(255,255,255,.95), transparent); animation: progressSweep 2.4s ease-in-out infinite; }
+    @keyframes progressSweep { from { transform: translateX(-120%); } to { transform: translateX(480%); } }
     
     /* Efek Pulse informatif pada status */
     .pulse-ring { position: relative; }
@@ -251,9 +253,10 @@
             <!-- Custom Progress Tracker -->
             <div class="relative w-full mt-4 mb-2 px-2">
               <!-- Garis Background -->
-              <div class="absolute top-3 left-0 w-full h-1.5 bg-gray-200 rounded-full"></div>
-              <!-- Garis Progres Aktif (Contoh: 35%) -->
-              <div class="absolute top-3 left-0 w-[35%] h-1.5 bg-[#c6dd73] rounded-full transition-all duration-1000"></div>
+              <div class="absolute top-3 left-0 w-full h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                <div class="absolute inset-y-0 left-0 w-[35%] rounded-full bg-[#c6dd73] transition-all duration-1000"></div>
+                <span class="cycle-progress-sweep absolute inset-y-0 left-0 w-1/4" aria-hidden="true"></span>
+              </div>
               
               <!-- Titik-titik Tahapan -->
               <div class="relative flex justify-between w-full">
