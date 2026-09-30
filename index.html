@@ -231,6 +231,93 @@
             <p class="mt-4 text-[10px] font-bold text-[#112217] bg-[#c6dd73] inline-block px-2 py-1 rounded-md">Otomatis Aktif</p>
           </article>
         </section>
+        <!-- TAMBAHAN BAWAH DASHBOARD: Progress Tracker & Activity Log -->
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
+          
+          <!-- 1. Visualisasi Progres Pengolahan (Ambil 2 kolom di layar lebar) -->
+          <article class="animate-item card-anim glass-card rounded-3xl p-6 shadow-sm lg:col-span-2 flex flex-col justify-between border border-[#dce4d8]">
+            <div class="flex items-center justify-between mb-6">
+              <div>
+                <h4 class="font-bold text-base text-[#183126]">Progres Siklus Pengolahan Saat Ini</h4>
+                <p class="text-[11px] text-[#66766c] mt-1">Estimasi waktu tersisa: <span class="font-bold text-[#183126]">18 Jam 00 Menit</span></p>
+              </div>
+              <div class="rounded-xl bg-white/50 p-2 border border-[#dce4d8] text-[#c6dd73]"><i data-lucide="timer" class="h-5 w-5"></i></div>
+            </div>
+
+            <!-- Custom Progress Tracker -->
+            <div class="relative w-full mt-4 mb-2 px-2">
+              <!-- Garis Background -->
+              <div class="absolute top-3 left-0 w-full h-1.5 bg-gray-200 rounded-full"></div>
+              <!-- Garis Progres Aktif (Contoh: 35%) -->
+              <div class="absolute top-3 left-0 w-[35%] h-1.5 bg-[#c6dd73] rounded-full transition-all duration-1000"></div>
+              
+              <!-- Titik-titik Tahapan -->
+              <div class="relative flex justify-between w-full">
+                <!-- Tahap 1 (Selesai) -->
+                <div class="flex flex-col items-center">
+                  <div class="h-6 w-6 rounded-full bg-[#112217] border-4 border-white flex items-center justify-center shadow-md z-10"><i data-lucide="check" class="h-3 w-3 text-[#c6dd73]"></i></div>
+                  <span class="text-[10px] font-bold text-[#183126] mt-2 text-center">Influen Masuk</span>
+                </div>
+                
+                <!-- Tahap 2 (Sedang Berjalan) -->
+                <div class="flex flex-col items-center">
+                  <div class="h-6 w-6 rounded-full bg-[#c6dd73] border-4 border-white shadow-md z-10 animate-pulse"></div>
+                  <span class="text-[10px] font-bold text-[#183126] mt-2 text-center">Proses Biofilter</span>
+                </div>
+
+                <!-- Tahap 3 (Belum) -->
+                <div class="flex flex-col items-center">
+                  <div class="h-6 w-6 rounded-full bg-gray-200 border-4 border-white z-10"></div>
+                  <span class="text-[10px] font-bold text-gray-400 mt-2 text-center">Fitoremediasi</span>
+                </div>
+
+                <!-- Tahap 4 (Belum) -->
+                <div class="flex flex-col items-center">
+                  <div class="h-6 w-6 rounded-full bg-gray-200 border-4 border-white z-10"></div>
+                  <span class="text-[10px] font-bold text-gray-400 mt-2 text-center">Outlet Netral</span>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- 2. Log Aktivitas Singkat (Ambil 1 kolom) -->
+          <article class="animate-item card-anim bg-white rounded-3xl p-6 shadow-sm border border-[#dce4d8]">
+            <div class="flex items-center justify-between mb-4 border-b border-gray-100 pb-3">
+              <h4 class="font-bold text-base text-[#183126]">Aktivitas Sistem</h4>
+              <!-- Mengarahkan klik langsung ke tab Notifikasi -->
+              <button onclick="document.querySelector('.side-link[data-view=\'Alerts\']').click()" class="text-[10px] font-bold text-[#66766c] hover:text-[#183126] transition">Lihat Semua</button>
+            </div>
+            
+            <div class="space-y-4">
+              <!-- Item Log 1 -->
+              <div class="flex items-start gap-3">
+                <div class="rounded-full bg-green-50 p-1.5 mt-0.5"><i data-lucide="zap" class="h-3.5 w-3.5 text-green-600"></i></div>
+                <div>
+                  <p class="text-xs font-bold text-[#183126]">Pompa Sirkulasi Aktif</p>
+                  <p class="text-[10px] text-[#66766c]">Hari ini, 13:45 WIB</p>
+                </div>
+              </div>
+              
+              <!-- Item Log 2 -->
+              <div class="flex items-start gap-3">
+                <div class="rounded-full bg-blue-50 p-1.5 mt-0.5"><i data-lucide="droplets" class="h-3.5 w-3.5 text-blue-600"></i></div>
+                <div>
+                  <p class="text-xs font-bold text-[#183126]">Penyesuaian pH Stabil</p>
+                  <p class="text-[10px] text-[#66766c]">Hari ini, 12:30 WIB</p>
+                </div>
+              </div>
+
+              <!-- Item Log 3 -->
+              <div class="flex items-start gap-3">
+                <div class="rounded-full bg-gray-100 p-1.5 mt-0.5"><i data-lucide="refresh-ccw" class="h-3.5 w-3.5 text-gray-600"></i></div>
+                <div>
+                  <p class="text-xs font-bold text-gray-600">Siklus Baru Dimulai</p>
+                  <p class="text-[10px] text-gray-400">Kemarin, 20:00 WIB</p>
+                </div>
+              </div>
+            </div>
+          </article>
+        </section>
       </main>
 
       <!-- 2. REPORTS VIEW -->
