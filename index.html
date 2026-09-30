@@ -171,10 +171,29 @@
               <i data-lucide="calendar-clock" class="h-3.5 w-3.5 text-[#c6dd73]"></i>
               <span id="realtimeClock" class="text-[11px] sm:text-xs font-bold tracking-wide">Memuat Waktu...</span>
             </div>
-            <button id="headerBellBtn" type="button" class="relative rounded-xl border border-[#dce4d8] bg-white p-2 text-[#183126] hover:bg-[#c6dd73]/30 transition shadow-sm shrink-0" title="Pusat Notifikasi">
-              <i data-lucide="bell" class="h-4 w-4"></i>
-              <span id="headerBellBadge" class="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#c83d35] text-[9px] font-bold text-white shadow-sm animate-pulse">2</span>
-            </button>
+            <div id="notificationPopoverWrap" class="relative shrink-0">
+              <button id="headerBellBtn" type="button" aria-expanded="false" aria-controls="notificationPopover" class="relative rounded-xl border border-[#dce4d8] bg-white p-2 text-[#183126] hover:bg-[#c6dd73]/30 transition shadow-sm" title="Pusat Notifikasi">
+                <i data-lucide="bell" class="h-4 w-4"></i>
+                <span id="headerBellBadge" class="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#c83d35] text-[9px] font-bold text-white shadow-sm animate-pulse">2</span>
+              </button>
+              <section id="notificationPopover" class="notification-popover absolute right-0 top-full z-50 mt-3 hidden overflow-hidden rounded-2xl border border-[#dce4d8] bg-white text-[#183126] shadow-2xl" style="width: min(20rem, calc(100vw - 2rem));" aria-labelledby="notificationPopoverTitle">
+                <div class="flex items-center justify-between border-b border-[#dce4d8] px-4 py-3">
+                  <h3 id="notificationPopoverTitle" class="text-sm font-extrabold">Notifikasi terbaru</h3>
+                  <span class="rounded-full bg-amber-50 px-2 py-1 text-[10px] font-bold text-amber-800">2 belum dibaca</span>
+                </div>
+                <div class="divide-y divide-[#edf0e9]">
+                  <div class="flex gap-3 px-4 py-3">
+                    <span class="mt-0.5 rounded-full bg-amber-100 p-1.5 text-amber-700"><i data-lucide="alert-triangle" class="h-4 w-4"></i></span>
+                    <div><p class="text-xs font-bold">Kalibrasi sensor pH disarankan</p><p class="mt-1 text-[10px] leading-relaxed text-[#66766c]">Terdeteksi deviasi kecil pada pembacaan sensor.</p></div>
+                  </div>
+                  <div class="flex gap-3 px-4 py-3">
+                    <span class="mt-0.5 rounded-full bg-blue-50 p-1.5 text-blue-700"><i data-lucide="info" class="h-4 w-4"></i></span>
+                    <div><p class="text-xs font-bold">Siklus pengolahan selesai</p><p class="mt-1 text-[10px] leading-relaxed text-[#66766c]">Waktu retensi tercapai, pompa sirkulasi aktif.</p></div>
+                  </div>
+                </div>
+                <button id="notificationOpenAll" type="button" class="w-full border-t border-[#dce4d8] px-4 py-3 text-left text-xs font-bold text-[#345c43] transition hover:bg-[#f4f7ef]">Buka pusat notifikasi <span aria-hidden="true">→</span></button>
+              </section>
+            </div>
             <button id="refreshButton" type="button" class="rounded-xl border border-[#dce4d8] bg-white p-2 text-[#183126] hover:bg-[#c6dd73]/30 transition shadow-sm shrink-0">
               <i data-lucide="refresh-cw" class="h-4 w-4 transition-transform duration-500"></i>
             </button>
@@ -964,13 +983,38 @@
     };
 
     const headerBellBtn = document.getElementById('headerBellBtn');
-    if (headerBellBtn) {
+    const notificationPopover = document.getElementById('notificationPopover');
+    const notificationPopoverWrap = document.getElementById('notificationPopoverWrap');
+    const notificationOpenAll = document.getElementById('notificationOpenAll');
+
+    function closeNotificationPopover() {
+      if (!notificationPopover || !headerBellBtn) return;
+      notificationPopover.classList.add('hidden');
+      headerBellBtn.setAttribute('aria-expanded', 'false');
+    }
+
+    if (headerBellBtn && notificationPopover && notificationPopoverWrap) {
       headerBellBtn.onclick = () => {
-        const alertNavBtn = document.querySelector('.side-link[data-view="Alerts"]');
-        if (alertNavBtn) {
-          alertNavBtn.click();
-        }
+        const isOpen = headerBellBtn.getAttribute('aria-expanded') === 'true';
+        notificationPopover.classList.toggle('hidden', isOpen);
+        headerBellBtn.setAttribute('aria-expanded', String(!isOpen));
       };
+
+      if (notificationOpenAll) {
+        notificationOpenAll.onclick = () => {
+          closeNotificationPopover();
+          const alertsLink = document.querySelector('.side-link[data-view="Alerts"]');
+          if (alertsLink) alertsLink.click();
+        };
+      }
+
+      document.addEventListener('click', event => {
+        if (!notificationPopoverWrap.contains(event.target)) closeNotificationPopover();
+      });
+
+      document.addEventListener('keydown', event => {
+        if (event.key === 'Escape') closeNotificationPopover();
+      });
     }
 
     if (window.lucide) {
