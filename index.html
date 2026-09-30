@@ -1,0 +1,758 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZENTRIX - IoT Wastewater Monitoring</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com/3.4.17" type="text/javascript"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.577.0/dist/umd/lucide.min.js" type="text/javascript"></script>
+  
+  <style>
+    :root {
+      --forest: #112217;
+      --forest-2: #1e3e2b;
+      --lime: #c6dd73;
+      --cream: #f4f1ea;
+      --ink: #183126;
+      --line: #dce4d8;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; color: var(--ink); font-family: "Plus Jakarta Sans", sans-serif; background: var(--cream); overflow-x: hidden; }
+    button, input, select { font: inherit; outline: none; }
+    
+    .app-shell { width: 100%; min-height: 100vh; background: radial-gradient(circle at 85% 10%, rgba(198,221,115,.20), transparent 30rem), var(--cream); }
+    
+    /* Sidebar */
+    .sidebar { 
+      position: fixed; left: -280px; top: 0; bottom: 0; width: 260px; z-index: 50;
+      background: linear-gradient(180deg, #112217 0%, #1a3a27 100%); color: #eaf2e7; 
+      transition: left .35s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 10px 0 30px rgba(0,0,0,0.3);
+    }
+    .sidebar.open { left: 0; }
+    .sidebar-overlay {
+      position: fixed; inset: 0; background: rgba(17,34,23,0.4); backdrop-filter: blur(3px);
+      z-index: 40; opacity: 0; pointer-events: none; transition: opacity .3s ease;
+    }
+    .sidebar-overlay.show { opacity: 1; pointer-events: auto; }
+
+    .brand-mark { background: conic-gradient(from 210deg, #c6dd73, #78ad65, #e7efaa, #c6dd73); }
+    .side-link { display: flex; align-items: center; gap: .8rem; width: 100%; padding: .8rem 1rem; border-radius: 1rem; color: #bbcec0; font-size: .88rem; font-weight: 600; transition: all .3s ease; text-align: left; }
+    .side-link:hover { background: rgba(255, 255, 255, 0.08); color: white; transform: translateX(5px); }
+    .side-link.active { background: #c6dd73; color: #112217; font-weight: 700; box-shadow: 0 8px 20px rgba(198,221,115,.25); }
+    
+    /* Cards & Animations */
+    .card-anim { transition: all .3s ease; border: 1px solid var(--line); }
+    .card-anim:hover { transform: translateY(-4px); box-shadow: 0 15px 30px rgba(24, 49, 38, 0.06); }
+    .glass-card { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.6); }
+    
+    .tab-view { display: none; opacity: 0; transform: translateY(15px); }
+    .tab-view.active { display: block; animation: slideFade .4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    @keyframes slideFade { to { opacity: 1; transform: translateY(0); } }
+    
+    .pulse-ring { position: relative; }
+    .pulse-ring::before { content: ''; position: absolute; left: -3px; top: -3px; width: calc(100% + 6px); height: calc(100% + 6px); background: #49783d; border-radius: 50%; z-index: 0; opacity: .6; animation: ringPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+    @keyframes ringPulse { 0% { transform: scale(0.8); opacity: 0.9; } 100% { transform: scale(1.6); opacity: 0; } }
+    
+    /* Inputs */
+    select.custom-select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23183126' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 1rem center; background-size: 1em; }
+    select.custom-select:focus, input.custom-input:focus { border-color: var(--forest); box-shadow: 0 0 0 3px rgba(198,221,115, 0.3); }
+    
+    /* Toast */
+    .toast { opacity: 0; transform: translateY(-15px); pointer-events: none; transition: all .4s cubic-bezier(0.16, 1, 0.3, 1); }
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    /* Device Detail */
+    .device-detail-wrap { max-height: 0; overflow: hidden; transition: max-height 0.3s ease, opacity 0.3s ease; opacity: 0; }
+    .device-detail-wrap.open { max-height: 200px; opacity: 1; }
+  </style>
+</head>
+<body>
+  <div class="app-shell flex flex-col min-h-screen">
+    
+    <!-- OVERLAY SIDEBAR -->
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+    <!-- SIDEBAR NAVIGASI -->
+    <aside id="sidebar" class="sidebar flex flex-col p-5">
+      <div class="flex items-center justify-between py-2">
+        <div class="flex items-center gap-3">
+          <div class="brand-mark grid h-10 w-10 place-items-center rounded-xl shadow-md">
+            <i data-lucide="droplets" class="h-5 w-5 text-[#112217]"></i>
+          </div>
+          <div>
+            <h1 class="font-extrabold tracking-tight text-white text-xl">ZENTRIX</h1>
+            <p class="text-[10px] font-bold uppercase tracking-wider text-[#c6dd73]">IoT Monitoring</p>
+          </div>
+        </div>
+        <button id="closeSidebar" class="text-white/60 hover:text-white p-1.5 rounded-lg bg-white/5 hover:bg-white/10 transition">
+          <i data-lucide="x" class="h-5 w-5"></i>
+        </button>
+      </div>
+
+      <nav aria-label="Navigasi utama" class="mt-8 space-y-2 flex-1">
+        <button type="button" class="side-link active" data-view="Dashboard">
+          <i data-lucide="layout-dashboard" class="h-4.5 w-4.5"></i><span>Dashboard Utama</span>
+        </button> 
+        <button type="button" class="side-link" data-view="Reports">
+          <i data-lucide="file-text" class="h-4.5 w-4.5"></i><span>Laporan (Input Data)</span>
+        </button> 
+        <button type="button" class="side-link" data-view="Analytics">
+          <i data-lucide="activity" class="h-4.5 w-4.5"></i><span>Analytics Sensor</span>
+        </button> 
+        <button type="button" class="side-link" data-view="Devices">
+          <i data-lucide="cpu" class="h-4.5 w-4.5"></i><span>Manajemen Devices</span>
+        </button> 
+        <button type="button" class="side-link" data-view="Alerts">
+          <i data-lucide="bell" class="h-4.5 w-4.5"></i><span>Notifikasi</span>
+          <span id="badgeAlertCount" class="ml-auto rounded-full bg-[#c83d35] px-2 py-0.5 text-[10px] font-bold text-white shadow-sm">2</span>
+        </button>
+        <div class="my-5 border-t border-white/10"></div>
+        <button type="button" class="side-link" data-view="Settings">
+          <i data-lucide="settings" class="h-4.5 w-4.5"></i><span>Pengaturan</span>
+        </button>
+      </nav>
+    </aside>
+
+    <!-- KONTEN UTAMA -->
+    <div class="min-w-0 flex-1 flex flex-col h-screen overflow-y-auto">
+      
+      <!-- HEADER -->
+      <header class="border-b border-[#dce4d8] bg-[#fffdf7]/85 px-4 sm:px-6 py-4 backdrop-blur-lg sticky top-0 z-30 shadow-sm">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <button id="openSidebar" type="button" class="rounded-xl border border-[#dce4d8] bg-white p-2 text-[#183126] hover:bg-[#c6dd73]/30 transition shadow-sm" title="Buka Menu">
+              <i data-lucide="menu" class="h-5 w-5"></i>
+            </button>
+            <div>
+              <p id="breadcrumb" class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[#66766c]">Monitoring Pengolahan Limbah Cair</p>
+              <h2 id="viewTitle" class="mt-0.5 font-extrabold text-lg sm:text-xl text-[#183126]">Dashboard Utama</h2>
+            </div>
+          </div>
+          
+          <div class="flex items-center justify-between sm:justify-end gap-2 w-full sm:w-auto mt-2 sm:mt-0">
+            <div class="flex items-center gap-2 rounded-xl bg-[#183126] px-3.5 py-1.5 text-white shadow-md w-full sm:w-auto justify-center">
+              <i data-lucide="calendar-clock" class="h-3.5 w-3.5 text-[#c6dd73]"></i>
+              <span id="realtimeClock" class="text-[11px] sm:text-xs font-bold tracking-wide">Memuat Waktu...</span>
+            </div>
+            <button id="refreshButton" type="button" class="rounded-xl border border-[#dce4d8] bg-white p-2 text-[#183126] hover:bg-[#c6dd73]/30 transition shadow-sm shrink-0">
+              <i data-lucide="refresh-cw" class="h-4 w-4"></i>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <!-- 1. DASHBOARD VIEW (DIFOKUSKAN PADA SENSOR UTAMA) -->
+      <main id="DashboardView" class="tab-view active p-4 sm:p-6 space-y-6">
+        <section class="relative overflow-hidden rounded-3xl p-6 sm:p-8 text-white shadow-xl" style="background: linear-gradient(135deg, #112217 0%, #1e3e2b 60%, #345c43 100%);">
+          <div class="relative z-10 flex flex-wrap items-end justify-between gap-6">
+            <div>
+              <div class="flex items-center gap-2 mb-3">
+                <span class="inline-block rounded-full bg-[#c6dd73] px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-[#112217] shadow-sm">Sistem Real-Time</span>
+                <span class="inline-block rounded-full border border-white/30 bg-white/10 px-3 py-1 text-[10px] font-bold text-white"><i data-lucide="wifi" class="h-3 w-3 inline mr-1"></i> ESP32 Online</span>
+              </div>
+              <h2 class="font-extrabold text-2xl sm:text-3xl text-white tracking-tight">Monitoring Limbah RPA</h2>
+              <p class="mt-2 max-w-lg text-xs sm:text-sm leading-relaxed text-[#dce7d8]">Pemantauan langsung parameter suhu, keasaman (pH), dan waktu proses pengolahan limbah cair.</p>
+            </div>
+            <div class="rounded-2xl border border-white/20 bg-white/10 px-5 py-4 backdrop-blur-md">
+              <p class="text-[10px] font-bold uppercase tracking-widest text-[#dce7d8] mb-1">Status Reaktor Saat Ini</p>
+              <div class="flex items-center gap-2.5">
+                <span class="pulse-ring h-3 w-3 rounded-full bg-[#c6dd73]"></span>
+                <p class="text-lg font-extrabold text-[#c6dd73]">Proses Berjalan</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Main Metrics (Sesuai Referensi Gambar) -->
+        <section class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <article class="card-anim glass-card rounded-2xl p-5">
+            <div class="flex justify-between items-start">
+              <div>
+                <p class="text-[11px] font-bold text-[#66766c] uppercase tracking-wider">Suhu Cairan</p>
+                <p id="dashTemp" class="mt-2 text-3xl font-extrabold text-[#183126]">28,5<span class="text-base font-medium text-[#66766c] ml-1">°C</span></p>
+              </div>
+              <div class="rounded-xl bg-red-50 p-2.5 text-red-600"><i data-lucide="thermometer" class="h-5 w-5"></i></div>
+            </div>
+            <p class="mt-4 text-[10px] font-bold text-green-700 bg-green-50 inline-block px-2 py-1 rounded-md">Optimal</p>
+          </article>
+
+          <article class="card-anim glass-card rounded-2xl p-5">
+            <div class="flex justify-between items-start">
+              <div>
+                <p class="text-[11px] font-bold text-[#66766c] uppercase tracking-wider">Derajat Keasaman (pH)</p>
+                <p id="dashPh" class="mt-2 text-3xl font-extrabold text-[#183126]">6,8</p>
+              </div>
+              <div class="rounded-xl bg-green-50 p-2.5 text-green-700"><i data-lucide="activity" class="h-5 w-5"></i></div>
+            </div>
+            <p class="mt-4 text-[10px] font-bold text-green-700 bg-green-50 inline-block px-2 py-1 rounded-md">Kondisi Netral</p>
+          </article>
+
+          <article class="card-anim glass-card rounded-2xl p-5">
+            <div class="flex justify-between items-start">
+              <div>
+                <p class="text-[11px] font-bold text-[#66766c] uppercase tracking-wider">Lama Pengolahan</p>
+                <p id="dashTime" class="mt-2 text-3xl font-extrabold text-[#183126]">18<span class="text-base font-medium text-[#66766c] ml-1">jam</span></p>
+              </div>
+              <div class="rounded-xl bg-amber-50 p-2.5 text-amber-600"><i data-lucide="clock" class="h-5 w-5"></i></div>
+            </div>
+            <p class="mt-4 text-[10px] font-bold text-amber-700 bg-amber-50 inline-block px-2 py-1 rounded-md">Siklus Berjalan</p>
+          </article>
+
+          <article class="card-anim rounded-2xl bg-[#112217] p-5 text-white shadow-lg">
+            <div class="flex justify-between items-start">
+              <div>
+                <p class="text-[11px] font-bold text-[#dce7d8] uppercase tracking-wider">Status Pompa Air</p>
+                <p class="mt-2 text-2xl font-extrabold text-white">Sirkulasi ON</p>
+              </div>
+              <div class="rounded-xl bg-white/10 p-2.5 text-[#c6dd73]"><i data-lucide="zap" class="h-5 w-5"></i></div>
+            </div>
+            <p class="mt-4 text-[10px] font-bold text-[#112217] bg-[#c6dd73] inline-block px-2 py-1 rounded-md">Otomatis Aktif</p>
+          </article>
+        </section>
+      </main>
+
+      <!-- 2. REPORTS VIEW (DITAMBAH FORM INPUT DATA MANUAL KE SPREADSHEETS) -->
+      <main id="ReportsView" class="tab-view p-4 sm:p-6 space-y-6">
+        <div class="glass-card rounded-3xl p-6 shadow-sm border-t-4 border-t-[#183126]">
+          <h3 class="font-bold text-xl sm:text-2xl text-[#183126]">Data Sensor Laporan Limbah</h3>
+          <p class="text-xs text-[#66766c] mt-1 mb-6">Tinjau rekapitulasi data sensor (Suhu, pH, Waktu) dan catat data tambahan (misal: kondisi visual) ke Spreadsheets terintegrasi.</p>
+          
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 text-sm">
+            <div>
+              <label class="block font-bold text-[#183126] mb-2 text-xs">Pilih Periode Laporan</label>
+              <select class="custom-select w-full rounded-xl border border-[#dce4d8] px-4 py-3 bg-white text-[#183126] font-medium shadow-sm">
+                <option>Hari ini</option>
+                <option>7 Hari Terakhir</option>
+                <option>Bulan ini</option>
+              </select>
+            </div>
+            <div>
+              <label class="block font-bold text-[#183126] mb-2 text-xs">Pilih Parameter Tampil</label>
+              <select class="custom-select w-full rounded-xl border border-[#dce4d8] px-4 py-3 bg-white text-[#183126] font-medium shadow-sm">
+                <option>Semua (Suhu, pH, Waktu)</option>
+                <option>Hanya Suhu (°C)</option>
+                <option>Hanya Keasaman (pH)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tabel Riwayat Data Otomatis (Dari Sensor) -->
+        <div class="glass-card rounded-3xl p-6 space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-4">
+            <h4 class="font-bold text-lg text-[#183126]">Log Sensor Otomatis</h4>
+            <button onclick="showToast('Mengunduh Log Data ke format Excel...')" class="rounded-xl bg-white border border-[#dce4d8] text-[#183126] px-4 py-2 text-xs font-bold shadow-sm hover:bg-slate-50 transition flex items-center gap-2">
+              <i data-lucide="download" class="h-4 w-4"></i> Export Log
+            </button>
+          </div>
+          <div class="overflow-x-auto rounded-xl border border-[#dce4d8]">
+            <table class="w-full text-left text-xs whitespace-nowrap">
+              <thead class="bg-[#f8faf6] text-[#66766c] border-b border-[#dce4d8]">
+                <tr>
+                  <th class="p-4 font-bold">Waktu (WIB)</th>
+                  <th class="p-4 font-bold">Suhu Air (°C)</th>
+                  <th class="p-4 font-bold">Keasaman (pH)</th>
+                  <th class="p-4 font-bold">Durasi Tahap</th>
+                  <th class="p-4 font-bold text-right">Status Sistem</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-[#dce4d8] bg-white">
+                <tr class="hover:bg-gray-50 transition">
+                  <td class="p-4 font-medium text-[#183126]">Hari ini, 08:00</td>
+                  <td class="p-4 text-[#183126] font-bold">28.5</td>
+                  <td class="p-4 text-[#183126] font-bold">6.8</td>
+                  <td class="p-4 text-[#66766c]">18 Jam</td>
+                  <td class="p-4 text-right"><span class="rounded-md bg-green-100 text-green-800 px-2.5 py-1 text-[10px] font-bold">Berjalan</span></td>
+                </tr>
+                <tr class="hover:bg-gray-50 transition">
+                  <td class="p-4 font-medium text-[#183126]">Kemarin, 20:00</td>
+                  <td class="p-4 text-[#183126] font-bold">28.3</td>
+                  <td class="p-4 text-[#183126] font-bold">6.5</td>
+                  <td class="p-4 text-[#66766c]">6 Jam</td>
+                  <td class="p-4 text-right"><span class="rounded-md bg-green-100 text-green-800 px-2.5 py-1 text-[10px] font-bold">Berjalan</span></td>
+                </tr>
+                <tr class="hover:bg-gray-50 transition">
+                  <td class="p-4 font-medium text-[#183126]">Kemarin, 14:00</td>
+                  <td class="p-4 text-[#183126] font-bold">28.0</td>
+                  <td class="p-4 text-[#183126] font-bold">6.2</td>
+                  <td class="p-4 text-[#66766c]">0 Jam (Mulai)</td>
+                  <td class="p-4 text-right"><span class="rounded-md bg-blue-100 text-blue-800 px-2.5 py-1 text-[10px] font-bold">Siklus Baru</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Form Input Manual Integrasi Spreadsheet -->
+        <div class="card-anim rounded-3xl bg-white p-6 shadow-md border border-[#dce4d8]">
+          <div class="mb-4">
+            <h4 class="font-bold text-lg text-[#183126]">Input Catatan Manual (Sync to Spreadsheet)</h4>
+            <p class="text-xs text-[#66766c] mt-1">Tambahkan catatan observasi manual di luar data sensor otomatis (misal: warna air, bau, dll).</p>
+          </div>
+          <form onsubmit="event.preventDefault(); showToast('Data berhasil dikirim dan tersinkronisasi ke Google Spreadsheets!'); this.reset();" class="space-y-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block font-bold text-[#183126] mb-1.5 text-xs">Petugas / Operator</label>
+                <input type="text" placeholder="Nama Anda" required class="custom-input w-full rounded-xl border border-[#dce4d8] px-4 py-3 bg-slate-50 text-sm">
+              </div>
+              <div>
+                <label class="block font-bold text-[#183126] mb-1.5 text-xs">Tahap Reaktor</label>
+                <select class="custom-select w-full rounded-xl border border-[#dce4d8] px-4 py-3 bg-slate-50 text-sm">
+                  <option>Biofilter</option>
+                  <option>Fitoremediasi</option>
+                  <option>Bak Penampung Awal</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <label class="block font-bold text-[#183126] mb-1.5 text-xs">Catatan Observasi (Bau, Warna Air, dll)</label>
+              <textarea placeholder="Contoh: Air tidak berbau menyengat, warna sedikit keruh kecoklatan..." rows="3" class="custom-input w-full rounded-xl border border-[#dce4d8] px-4 py-3 bg-slate-50 text-sm resize-none" required></textarea>
+            </div>
+            <button type="submit" class="w-full sm:w-auto rounded-xl bg-[#112217] text-white px-6 py-3 font-bold shadow-md hover:bg-[#1a3a27] transition flex items-center justify-center gap-2">
+              <i data-lucide="cloud-upload" class="h-4 w-4"></i> Simpan & Sinkronisasi
+            </button>
+          </form>
+        </div>
+      </main>
+
+      <!-- 3. ANALYTICS VIEW (FOKUS PADA SUHU & pH) -->
+      <main id="AnalyticsView" class="tab-view p-4 sm:p-6 space-y-6">
+        <div class="glass-card rounded-3xl p-6 border-t-4 border-t-[#c6dd73]">
+          <h3 class="font-bold text-xl sm:text-2xl text-[#183126]">Analytics Sensor Real-Time</h3>
+          <p class="text-xs text-[#66766c] mt-1">Analisis mendalam tren data dari sensor Suhu (DS18B20) dan Keasaman (pH) selama siklus pengolahan.</p>
+        </div>
+
+        <div class="grid gap-6 xl:grid-cols-2">
+          <!-- Grafik Suhu Modern -->
+          <article class="card-anim bg-white rounded-3xl p-6 shadow-sm border border-[#dce4d8]">
+            <div class="flex items-center justify-between mb-4 border-b border-gray-100 pb-4">
+              <div>
+                <h4 class="font-bold text-base text-[#183126]">Fluktuasi Suhu Reaktor (°C)</h4>
+                <p class="text-[10px] text-[#66766c] mt-1 uppercase">Sensor DS18B20 (5 Hari Terakhir)</p>
+              </div>
+              <div class="p-2 bg-gray-50 rounded-lg"><i data-lucide="thermometer" class="h-5 w-5 text-[#183126]"></i></div>
+            </div>
+            
+            <!-- Simulasi Bar Chart yang lebih bersih -->
+            <div class="mt-6 flex h-48 items-end gap-3 pb-2 px-2 relative">
+              <div class="absolute w-full border-t border-dashed border-red-300 top-[20%] left-0 z-0 flex justify-end">
+                <span class="text-[9px] text-red-500 bg-white px-1 -mt-2 font-bold">Batas Maks (35°C)</span>
+              </div>
+              
+              <div class="h-[60%] flex-1 rounded-t-lg bg-[#e2e8f0] flex flex-col justify-end items-center pb-2 text-[10px] font-bold relative group cursor-pointer hover:bg-[#cbd5e1] transition-colors"><span class="absolute -top-7 opacity-0 group-hover:opacity-100 transition-opacity bg-[#183126] text-white px-2 py-1 rounded shadow text-xs pointer-events-none">28.0°</span><span class="text-gray-500">Sen</span></div>
+              <div class="h-[65%] flex-1 rounded-t-lg bg-[#cbd5e1] flex flex-col justify-end items-center pb-2 text-[10px] font-bold relative group cursor-pointer hover:bg-[#94a3b8] transition-colors"><span class="absolute -top-7 opacity-0 group-hover:opacity-100 transition-opacity bg-[#183126] text-white px-2 py-1 rounded shadow text-xs pointer-events-none">28.2°</span><span class="text-gray-600">Sel</span></div>
+              <div class="h-[75%] flex-1 rounded-t-lg bg-[#c6dd73] flex flex-col justify-end items-center pb-2 text-[10px] font-bold relative group cursor-pointer shadow-md"><span class="absolute -top-7 opacity-100 bg-[#183126] text-white px-2 py-1 rounded shadow text-xs pointer-events-none">28.5°</span><span class="text-[#183126]">Rab</span></div>
+              <div class="h-[70%] flex-1 rounded-t-lg bg-[#345c43] flex flex-col justify-end items-center pb-2 text-[10px] font-bold relative group cursor-pointer hover:bg-[#1e3e2b] transition-colors"><span class="absolute -top-7 opacity-0 group-hover:opacity-100 transition-opacity bg-[#183126] text-white px-2 py-1 rounded shadow text-xs pointer-events-none">28.4°</span><span class="text-white">Kam</span></div>
+              <div class="h-[72%] flex-1 rounded-t-lg bg-[#112217] flex flex-col justify-end items-center pb-2 text-[10px] font-bold relative group cursor-pointer hover:bg-black transition-colors"><span class="absolute -top-7 opacity-0 group-hover:opacity-100 transition-opacity bg-[#183126] text-white px-2 py-1 rounded shadow text-xs pointer-events-none">28.3°</span><span class="text-white">Jum</span></div>
+            </div>
+          </article>
+
+          <!-- Pergerakan pH yang lebih bersih -->
+          <article class="card-anim bg-white rounded-3xl p-6 shadow-sm border border-[#dce4d8] flex flex-col">
+            <div class="flex items-center justify-between mb-4 border-b border-gray-100 pb-4">
+              <div>
+                <h4 class="font-bold text-base text-[#183126]">Tren Kestabilan pH Air</h4>
+                <p class="text-[10px] text-[#66766c] mt-1 uppercase">Siklus Keasaman (Inlet - Outlet)</p>
+              </div>
+              <div class="p-2 bg-gray-50 rounded-lg"><i data-lucide="activity" class="h-5 w-5 text-[#183126]"></i></div>
+            </div>
+            
+            <div class="flex-1 flex flex-col justify-center space-y-4 text-xs mt-2">
+              <div class="rounded-2xl border border-amber-200 bg-white p-4 flex justify-between items-center shadow-sm">
+                <div>
+                  <span class="font-bold text-[#183126] text-sm">Titik Inlet Awal</span>
+                  <p class="text-[10px] text-[#66766c] mt-1">Kandungan organik tinggi (Darah ayam, lemak)</p>
+                </div>
+                <strong class="text-amber-700 bg-amber-50 px-3 py-1.5 rounded-lg text-sm">pH 6.2 (Asam)</strong>
+              </div>
+              
+              <div class="flex justify-center -my-1"><div class="h-4 w-px bg-gray-200"></div></div>
+
+              <div class="rounded-2xl border border-green-200 bg-white p-4 flex justify-between items-center shadow-sm">
+                <div>
+                  <span class="font-bold text-[#183126] text-sm">Proses Biofilter Aktif</span>
+                  <p class="text-[10px] text-[#66766c] mt-1">Penguraian oleh mikroorganisme stabil</p>
+                </div>
+                <strong class="text-green-700 bg-green-50 px-3 py-1.5 rounded-lg text-sm">pH 6.8 (Normal)</strong>
+              </div>
+
+              <div class="flex justify-center -my-1"><div class="h-4 w-px bg-green-200"></div></div>
+
+              <div class="rounded-2xl border-2 border-[#183126] bg-white p-4 flex justify-between items-center shadow-md">
+                <div>
+                  <span class="font-bold text-[#183126] text-sm">Titik Outlet Akhir</span>
+                  <p class="text-[10px] text-[#66766c] mt-1">Air netral & aman dialirkan ke lingkungan</p>
+                </div>
+                <strong class="text-white bg-[#183126] px-3 py-1.5 rounded-lg text-sm shadow">pH 7.2 (Netral)</strong>
+              </div>
+            </div>
+          </article>
+        </div>
+      </main>
+
+      <!-- 4. DEVICES VIEW -->
+      <main id="DevicesView" class="tab-view p-4 sm:p-6 space-y-6">
+        <div class="glass-card rounded-3xl p-6 border-t-4 border-t-[#2563eb]">
+          <h3 class="font-bold text-xl sm:text-2xl text-[#183126]">Manajemen Perangkat IoT</h3>
+          <p class="text-xs text-[#66766c] mt-1">Daftar perangkat keras dan sensor yang terhubung. Klik <b>"Lihat Detail"</b> untuk spesifikasi teknis.</p>
+        </div>
+
+        <div class="space-y-4">
+          <!-- Item 1: ESP32 -->
+          <div class="card-anim rounded-2xl bg-white p-5 border border-[#dce4d8] shadow-sm">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div class="flex items-center gap-4">
+                <div class="rounded-xl bg-slate-100 text-slate-700 p-3"><i data-lucide="cpu" class="h-6 w-6"></i></div>
+                <div>
+                  <h4 class="font-bold text-base text-[#183126]">ESP32 DevKit V1</h4>
+                  <p class="text-xs text-[#66766c] mt-0.5">Mikrokontroler & Modul Wi-Fi Client</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-3 self-start sm:self-auto">
+                <span class="flex items-center gap-1.5 rounded-full bg-green-50 text-green-700 px-3 py-1 text-[10px] font-bold border border-green-200"><span class="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse"></span> Online</span>
+                <button onclick="toggleDeviceDetail('devDetail1', this)" class="rounded-xl bg-[#f1f4ea] px-4 py-2 text-xs font-bold text-[#183126] hover:bg-[#c6dd73]/50 transition border border-[#dce4d8]">Lihat Detail</button>
+              </div>
+            </div>
+            <!-- Detail -->
+            <div id="devDetail1" class="device-detail-wrap bg-slate-50 rounded-xl mt-0 px-4">
+              <div class="py-4 text-xs text-[#4b5563] space-y-2 border-t border-slate-200 mt-4">
+                <p><b class="text-[#183126]">Spesifikasi:</b> Dual-Core Tensilica Xtensa 32-bit (240MHz), terintegrasi Wi-Fi 802.11 b/g/n & Bluetooth v4.2 BLE.</p>
+                <p><b class="text-[#183126]">Fungsi Reaktor:</b> Sebagai otak sistem yang memproses data dari sensor pH dan suhu, serta mem-publish data ke MQTT Broker.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Item 2: Sensor Suhu -->
+          <div class="card-anim rounded-2xl bg-white p-5 border border-[#dce4d8] shadow-sm">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div class="flex items-center gap-4">
+                <div class="rounded-xl bg-red-50 text-red-600 p-3"><i data-lucide="thermometer" class="h-6 w-6"></i></div>
+                <div>
+                  <h4 class="font-bold text-base text-[#183126]">Sensor DS18B20</h4>
+                  <p class="text-xs text-[#66766c] mt-0.5">Probe Suhu Digital Waterproof</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-3 self-start sm:self-auto">
+                <span class="rounded-full bg-green-50 text-green-700 px-3 py-1 text-[10px] font-bold border border-green-200">Normal</span>
+                <button onclick="toggleDeviceDetail('devDetail2', this)" class="rounded-xl bg-[#f1f4ea] px-4 py-2 text-xs font-bold text-[#183126] hover:bg-[#c6dd73]/50 transition border border-[#dce4d8]">Lihat Detail</button>
+              </div>
+            </div>
+            <div id="devDetail2" class="device-detail-wrap bg-red-50/30 rounded-xl mt-0 px-4">
+              <div class="py-4 text-xs text-[#4b5563] space-y-2 border-t border-red-100 mt-4">
+                <p><b class="text-[#183126]">Spesifikasi:</b> Protokol antarmuka 1-Wire, Rentang ukur operasional -55°C hingga +125°C dengan tingkat presisi akurasi ±0.5°C.</p>
+                <p><b class="text-[#183126]">Fungsi Reaktor:</b> Dicelupkan ke dalam reaktor untuk memonitor suhu agar mikroba biofilter beraktivitas pada rentang termal ideal (25-35°C).</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Item 3: Sensor pH -->
+          <div class="card-anim rounded-2xl bg-white p-5 border border-[#dce4d8] shadow-sm">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div class="flex items-center gap-4">
+                <div class="rounded-xl bg-green-50 text-green-600 p-3"><i data-lucide="activity" class="h-6 w-6"></i></div>
+                <div>
+                  <h4 class="font-bold text-base text-[#183126]">Analog pH Meter Pro</h4>
+                  <p class="text-xs text-[#66766c] mt-0.5">Modul Pengukuran Tingkat Keasaman</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-3 self-start sm:self-auto">
+                <span class="rounded-full bg-amber-50 text-amber-700 px-3 py-1 text-[10px] font-bold border border-amber-200">Perlu Kalibrasi</span>
+                <button onclick="toggleDeviceDetail('devDetail3', this)" class="rounded-xl bg-[#f1f4ea] px-4 py-2 text-xs font-bold text-[#183126] hover:bg-[#c6dd73]/50 transition border border-[#dce4d8]">Lihat Detail</button>
+              </div>
+            </div>
+            <div id="devDetail3" class="device-detail-wrap bg-green-50/30 rounded-xl mt-0 px-4">
+              <div class="py-4 text-xs text-[#4b5563] space-y-2 border-t border-green-100 mt-4">
+                <p><b class="text-[#183126]">Spesifikasi:</b> Probe elektroda kaca industri, rentang pH 0.0 hingga 14.0. Output tegangan analog terhubung ke pin ADC ESP32.</p>
+                <p><b class="text-[#183126]">Fungsi Reaktor:</b> Memantau perubahan pH dari air limbah yang berpotensi mematikan bakteri biofilter maupun tanaman fitoremediasi.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Item 4: RTC -->
+          <div class="card-anim rounded-2xl bg-white p-5 border border-[#dce4d8] shadow-sm">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div class="flex items-center gap-4">
+                <div class="rounded-xl bg-amber-50 text-amber-600 p-3"><i data-lucide="clock" class="h-6 w-6"></i></div>
+                <div>
+                  <h4 class="font-bold text-base text-[#183126]">Modul RTC DS3231</h4>
+                  <p class="text-xs text-[#66766c] mt-0.5">Pencatat Durasi / Waktu Retensi</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-3 self-start sm:self-auto">
+                <span class="rounded-full bg-green-50 text-green-700 px-3 py-1 text-[10px] font-bold border border-green-200">Baterai OK</span>
+                <button onclick="toggleDeviceDetail('devDetail4', this)" class="rounded-xl bg-[#f1f4ea] px-4 py-2 text-xs font-bold text-[#183126] hover:bg-[#c6dd73]/50 transition border border-[#dce4d8]">Lihat Detail</button>
+              </div>
+            </div>
+            <div id="devDetail4" class="device-detail-wrap bg-amber-50/30 rounded-xl mt-0 px-4">
+              <div class="py-4 text-xs text-[#4b5563] space-y-2 border-t border-amber-100 mt-4">
+                <p><b class="text-[#183126]">Spesifikasi:</b> Real-Time Clock dengan osilator kompensasi suhu (TCXO). Komunikasi antarmuka I2C, dengan baterai cadangan CR2032.</p>
+                <p><b class="text-[#183126]">Fungsi Reaktor:</b> Menjaga presisi perhitungan waktu (18 jam) agar pompa sirkulasi beroperasi tepat waktu meskipun koneksi internet terputus.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <!-- 5. ALERTS VIEW -->
+      <main id="AlertsView" class="tab-view p-4 sm:p-6 space-y-6">
+        <div class="glass-card rounded-3xl p-6 flex flex-wrap items-center justify-between gap-4 border-t-4 border-t-amber-500">
+          <div>
+            <h3 class="font-bold text-xl sm:text-2xl text-[#183126]">Pusat Notifikasi</h3>
+            <p class="text-xs text-[#66766c] mt-1">Laporan peringatan sistem sensor dan aktivitas pompa.</p>
+          </div>
+          <button onclick="markAllAsRead()" class="rounded-xl bg-white border border-[#dce4d8] text-[#183126] px-5 py-2.5 text-xs font-bold shadow-sm hover:bg-[#f1f4ea] transition flex items-center gap-2 active:scale-95">
+            <i data-lucide="check-check" class="h-4 w-4 text-green-600"></i> Tandai Semua Dibaca
+          </button>
+        </div>
+
+        <div id="alertsContainer" class="space-y-4">
+          <!-- Alert 1 -->
+          <article class="alert-item card-anim rounded-2xl border-l-4 border-l-amber-500 bg-white p-5 shadow-sm transition-all relative overflow-hidden">
+            <div class="absolute right-0 top-0 w-24 h-24 bg-amber-50 rounded-bl-full -z-10"></div>
+            <div class="flex items-start sm:items-center justify-between gap-4">
+              <div class="flex items-start gap-3">
+                <div class="mt-0.5 rounded-full bg-amber-100 p-1.5"><i data-lucide="alert-triangle" class="h-4 w-4 text-amber-700"></i></div>
+                <div>
+                  <p class="font-bold text-[#183126] text-sm">Kalibrasi Sensor pH Disarankan</p>
+                  <p class="mt-1 text-xs text-[#66766c] leading-relaxed">Sistem mendeteksi deviasi pembacaan kecil di bak influen.</p>
+                </div>
+              </div>
+              <span class="shrink-0 rounded-md bg-amber-100 text-amber-800 font-bold px-2.5 py-1 text-[10px]">Perlu Tindakan</span>
+            </div>
+          </article>
+          <!-- Alert 2 -->
+          <article class="alert-item card-anim rounded-2xl border-l-4 border-l-blue-500 bg-white p-5 shadow-sm transition-all relative overflow-hidden">
+            <div class="absolute right-0 top-0 w-24 h-24 bg-blue-50 rounded-bl-full -z-10"></div>
+            <div class="flex items-start sm:items-center justify-between gap-4">
+              <div class="flex items-start gap-3">
+                <div class="mt-0.5 rounded-full bg-blue-100 p-1.5"><i data-lucide="info" class="h-4 w-4 text-blue-700"></i></div>
+                <div>
+                  <p class="font-bold text-[#183126] text-sm">Siklus 18 Jam Selesai</p>
+                  <p class="mt-1 text-xs text-[#66766c] leading-relaxed">Waktu retensi tercapai. Relay pompa sirkulasi otomatis menyala.</p>
+                </div>
+              </div>
+              <span class="shrink-0 rounded-md bg-blue-100 text-blue-800 font-bold px-2.5 py-1 text-[10px]">Info Sistem</span>
+            </div>
+          </article>
+        </div>
+      </main>
+
+      <!-- 6. SETTINGS VIEW (DESAIN FORM YANG KEREN) -->
+      <main id="SettingsView" class="tab-view p-4 sm:p-6 space-y-6 pb-20">
+        <div class="glass-card rounded-3xl p-6 border-t-4 border-t-slate-800">
+          <h3 class="font-bold text-xl sm:text-2xl text-[#183126]">Pengaturan Konfigurasi Sistem</h3>
+          <p class="text-xs text-[#66766c] mt-1">Sesuaikan preferensi operasional reaktor, batas anomali sensor, dan parameter jaringan MQTT.</p>
+        </div>
+
+        <div class="grid gap-6 xl:grid-cols-2">
+          <!-- Parameter IoT Card -->
+          <article class="card-anim bg-white rounded-3xl p-7 shadow-md border border-[#dce4d8]">
+            <h4 class="font-bold text-lg text-[#183126] mb-5">Mode Operasional & Threshold</h4>
+            
+            <div class="space-y-6 text-sm">
+              <!-- Mode Pompa -->
+              <div>
+                <label class="block font-bold text-[#183126] mb-2 text-xs uppercase tracking-wide">Mode Kontrol Pompa</label>
+                <select class="custom-select w-full rounded-xl border border-[#dce4d8] px-4 py-3 bg-white text-[#183126] font-medium shadow-sm transition hover:border-[#183126] cursor-pointer">
+                  <option value="auto" selected>Otomatis (Berdasarkan Sensor & RTC)</option>
+                  <option value="manual">Manual (Override Langsung)</option>
+                  <option value="timed">Terjadwal (Timed Relay)</option>
+                </select>
+              </div>
+
+              <!-- Input UP/DOWN Keren -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div>
+                  <label class="block font-bold text-[#183126] mb-2 text-xs uppercase tracking-wide">Batas Maks. Suhu (°C)</label>
+                  <div class="flex items-center bg-slate-50 border border-[#dce4d8] rounded-xl overflow-hidden shadow-inner">
+                    <button type="button" onclick="changeVal('tempInp', -1)" class="w-12 py-3 bg-white hover:bg-gray-100 text-[#183126] font-bold border-r border-[#dce4d8] transition-colors">-</button>
+                    <input id="tempInp" type="number" min="20" max="45" value="35" class="w-full text-center bg-transparent py-3 font-bold text-[#183126] appearance-none" style="-moz-appearance: textfield; outline:none;">
+                    <button type="button" onclick="changeVal('tempInp', 1)" class="w-12 py-3 bg-white hover:bg-gray-100 text-[#183126] font-bold border-l border-[#dce4d8] transition-colors">+</button>
+                  </div>
+                </div>
+                
+                <div>
+                  <label class="block font-bold text-[#183126] mb-2 text-xs uppercase tracking-wide">Siklus Reaktor (Jam)</label>
+                  <div class="flex items-center bg-slate-50 border border-[#dce4d8] rounded-xl overflow-hidden shadow-inner">
+                    <button type="button" onclick="changeVal('cycleInp', -1)" class="w-12 py-3 bg-white hover:bg-gray-100 text-[#183126] font-bold border-r border-[#dce4d8] transition-colors">-</button>
+                    <input id="cycleInp" type="number" min="1" max="48" value="18" class="w-full text-center bg-transparent py-3 font-bold text-[#183126] appearance-none" style="-moz-appearance: textfield; outline:none;">
+                    <button type="button" onclick="changeVal('cycleInp', 1)" class="w-12 py-3 bg-white hover:bg-gray-100 text-[#183126] font-bold border-l border-[#dce4d8] transition-colors">+</button>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="pt-2">
+                <button onclick="showToast('Parameter kontrol berhasil disimpan & disinkronkan ke ESP32!')" class="w-full rounded-xl bg-[#112217] text-white py-3.5 text-sm font-bold shadow-md hover:bg-[#1a3a27] hover:shadow-lg transition-all active:scale-[0.98]">Simpan Parameter Operasional</button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Jaringan -->
+          <article class="card-anim bg-white rounded-3xl p-7 shadow-md border border-[#dce4d8]">
+            <h4 class="font-bold text-lg text-[#183126] mb-5">Konektivitas Jaringan Wi-Fi</h4>
+            <div class="space-y-4 text-sm">
+              <div>
+                <label class="block font-bold text-[#183126] mb-2 text-xs uppercase tracking-wide">Jaringan SSID</label>
+                <input type="text" value="ZENTRIX_Simorejo_Hotspot" class="custom-input w-full rounded-xl border border-[#dce4d8] px-4 py-3 bg-slate-50 text-[#183126] font-medium transition focus:bg-white shadow-inner">
+              </div>
+              <div>
+                <label class="block font-bold text-[#183126] mb-2 text-xs uppercase tracking-wide">MQTT Broker URL</label>
+                <div class="relative">
+                  <input type="text" value="mqtt.zentrix-iot.cloud" class="custom-input w-full rounded-xl border border-[#dce4d8] px-4 py-3 bg-slate-50 text-[#183126] font-medium transition focus:bg-white shadow-inner pr-10">
+                  <i data-lucide="cloud" class="absolute right-3 top-3.5 h-4 w-4 text-gray-400"></i>
+                </div>
+              </div>
+              <div class="pt-2">
+                <button onclick="showToast('Konfigurasi jaringan berhasil diperbarui.')" class="w-full rounded-xl border-2 border-[#183126] bg-transparent text-[#183126] py-3 font-bold hover:bg-slate-50 transition-all active:scale-[0.98]">Terapkan ke Hardware</button>
+              </div>
+            </div>
+          </article>
+        </div>
+      </main>
+
+    </div>
+    
+    <!-- Toast Notifikasi (Desktop & Mobile) -->
+    <div id="toast" class="toast fixed bottom-6 sm:bottom-auto sm:top-6 left-1/2 -translate-x-1/2 sm:translate-x-0 sm:left-auto sm:right-6 z-50 flex items-center gap-3 rounded-2xl bg-[#112217] px-5 py-3.5 text-xs font-bold text-white shadow-2xl border border-white/10 w-[90%] sm:w-auto">
+      <i data-lucide="info" class="h-4 w-4 text-[#c6dd73] shrink-0"></i>
+      <span id="toastMsg">Notifikasi</span>
+    </div>
+  </div>
+
+  <script>
+    const toast = document.getElementById('toast');
+    const toastMsg = document.getElementById('toastMsg');
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    const openSidebarBtn = document.getElementById('openSidebar');
+    const closeSidebarBtn = document.getElementById('closeSidebar');
+
+    function showToast(message) { 
+      toastMsg.textContent = message; 
+      toast.classList.add('show'); 
+      setTimeout(() => toast.classList.remove('show'), 3000); 
+    }
+
+    function toggleSidebar(open) {
+      if (open) {
+        sidebar.classList.add('open');
+        sidebarOverlay.classList.add('show');
+      } else {
+        sidebar.classList.remove('open');
+        sidebarOverlay.classList.remove('show');
+      }
+    }
+
+    openSidebarBtn.onclick = () => toggleSidebar(true);
+    closeSidebarBtn.onclick = () => toggleSidebar(false);
+    sidebarOverlay.onclick = () => toggleSidebar(false);
+
+    // Update Jam & Tanggal secara real-time
+    function updateRealtimeClock() {
+      const now = new Date();
+      const dateOptions = { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' };
+      const dateString = now.toLocaleDateString('id-ID', dateOptions);
+      const timeString = now.toLocaleTimeString('id-ID', { hour12: false, hour: '2-digit', minute:'2-digit', second:'2-digit' });
+      
+      const clockEl = document.getElementById('realtimeClock');
+      if (clockEl) {
+        clockEl.innerHTML = `${dateString} &nbsp;|&nbsp; <span class="text-[#c6dd73] font-black tracking-widest">${timeString}</span>`;
+      }
+    }
+    setInterval(updateRealtimeClock, 1000);
+    updateRealtimeClock(); 
+
+    // Navigasi Tab
+    document.querySelectorAll('.side-link').forEach(btn => {
+      btn.onclick = () => {
+        const view = btn.dataset.view;
+        document.querySelectorAll('.side-link').forEach(x => x.classList.remove('active'));
+        btn.classList.add('active');
+        
+        document.querySelectorAll('.tab-view').forEach(v => v.classList.remove('active'));
+        document.getElementById(view + 'View').classList.add('active');
+        
+        const titles = {
+          'Dashboard': 'Dashboard Utama',
+          'Reports': 'Laporan (Input Data & Sensor)',
+          'Analytics': 'Analytics Sensor & Kinerja',
+          'Devices': 'Manajemen Perangkat IoT',
+          'Alerts': 'Pusat Notifikasi',
+          'Settings': 'Pengaturan Sistem'
+        };
+        document.getElementById('viewTitle').textContent = titles[view] || 'ZENTRIX Monitoring';
+        toggleSidebar(false);
+      };
+    });
+
+    // Accordion Toggle Device Detail
+    function toggleDeviceDetail(id, btnElement) {
+      const el = document.getElementById(id);
+      
+      if (el.classList.contains('open')) {
+        el.classList.remove('open');
+        btnElement.textContent = "Lihat Detail";
+        btnElement.classList.remove('bg-[#c6dd73]', 'text-[#112217]');
+        btnElement.classList.add('bg-[#f1f4ea]', 'text-[#183126]');
+      } else {
+        el.classList.add('open');
+        btnElement.textContent = "Tutup Detail";
+        btnElement.classList.remove('bg-[#f1f4ea]', 'text-[#183126]');
+        btnElement.classList.add('bg-[#c6dd73]', 'text-[#112217]');
+      }
+    }
+
+    // Tandai Semua Notifikasi Dibaca
+    function markAllAsRead() {
+      const alerts = document.querySelectorAll('.alert-item');
+      alerts.forEach(item => {
+        item.style.opacity = '0.6';
+        item.style.borderLeftColor = '#dce4d8';
+        const badges = item.querySelectorAll('span.rounded-md');
+        badges.forEach(b => {
+          b.className = 'shrink-0 rounded-md bg-gray-100 text-gray-500 font-bold px-2.5 py-1 text-[10px]';
+          b.textContent = 'Telah Dibaca';
+        });
+      });
+      const badgeCount = document.getElementById('badgeAlertCount');
+      if (badgeCount) badgeCount.style.display = 'none';
+      showToast('Semua peringatan telah ditandai selesai/dibaca.');
+    }
+
+    // Up/Down Value Controller untuk Settings
+    function changeVal(inputId, amount) {
+      const inp = document.getElementById(inputId);
+      let currentVal = parseInt(inp.value) || 0;
+      let min = parseInt(inp.min) || 0;
+      let max = parseInt(inp.max) || 100;
+      
+      let newVal = currentVal + amount;
+      if(newVal >= min && newVal <= max) {
+        inp.value = newVal;
+      }
+    }
+
+    // Tombol Refresh pada Dashboard (Update Angka Secara Acak)
+    document.getElementById('refreshButton').onclick = () => {
+      const randomTemp = (28.0 + (Math.random() * 0.9)).toFixed(1); 
+      const randomPh = (6.7 + (Math.random() * 0.4)).toFixed(1);
+      const tempEl = document.getElementById('dashTemp');
+      const phEl = document.getElementById('dashPh');
+      
+      if (tempEl) tempEl.innerHTML = `${randomTemp}<span class="text-base font-medium text-[#66766c] ml-1">°C</span>`;
+      if (phEl) phEl.textContent = randomPh;
+      
+      showToast('Data sensor berhasil ditarik ulang dari server IoT.');
+      
+      const icon = document.querySelector('#refreshButton i');
+      icon.style.transform = 'rotate(180deg)';
+      icon.style.transition = 'transform 0.4s ease';
+      setTimeout(() => { icon.style.transform = 'rotate(0deg)'; }, 400);
+    };
+
+    lucide.createIcons();
+  </script>
+</body>
+</html>
