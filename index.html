@@ -37,13 +37,13 @@
     }
     .sidebar-overlay.show { opacity: 1; pointer-events: auto; }
 
-    .side-link { display: flex; align-items: center; gap: .8rem; width: 100%; padding: .8rem 1rem; border-radius: 1rem; color: #bbcec0; font-size: .88rem; font-weight: 600; transition: all .3s ease; text-align: left; }
+    .side-link { display: flex; align-items: center; gap: .8rem; width: 100%; padding: .8rem 1rem; border-radius: .8rem; color: #bbcec0; font-size: .88rem; font-weight: 600; transition: background-color .2s ease, color .2s ease, transform .2s ease; text-align: left; }
     .side-link:hover { background: rgba(255, 255, 255, 0.08); color: white; transform: translateX(5px); }
     .side-link.active { background: #c6dd73; color: #112217; font-weight: 700; box-shadow: 0 8px 20px rgba(198,221,115,.25); }
     
     /* Cards & Animations */
-    .card-anim { transition: all .3s ease; border: 1px solid var(--line); }
-    .card-anim:hover { transform: translateY(-4px); box-shadow: 0 15px 30px rgba(24, 49, 38, 0.08); }
+    .card-anim { transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease; border: 1px solid var(--line); }
+    .card-anim:hover { transform: translateY(-2px); box-shadow: 0 12px 24px rgba(24, 49, 38, 0.08); border-color: #c8d5c5; }
     .glass-card { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.6); }
     
     /* Animasi Transisi Tab yang lebih informatif (Staggered effect) */
@@ -64,8 +64,16 @@
     .pulse-ring::before { content: ''; position: absolute; left: -3px; top: -3px; width: calc(100% + 6px); height: calc(100% + 6px); background: #49783d; border-radius: 50%; z-index: 0; opacity: .6; animation: ringPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
     @keyframes ringPulse { 0% { transform: scale(0.8); opacity: 0.9; } 100% { transform: scale(1.6); opacity: 0; } }
     
-    .floating-icon { animation: float 3s ease-in-out infinite; }
-    @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-5px); } 100% { transform: translateY(0px); } }
+    .floating-icon { transition: transform .25s ease; }
+    .card-anim:hover .floating-icon { transform: translateY(-2px); }
+    .value-updated { animation: valueUpdated .55s ease-out; }
+    @keyframes valueUpdated { 0% { opacity: .55; transform: translateY(4px); } 100% { opacity: 1; transform: translateY(0); } }
+
+    button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible, textarea:focus-visible { outline: 3px solid rgba(126, 154, 58, .55); outline-offset: 3px; }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    }
 
     /* Inputs */
     select.custom-select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23183126' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 1rem center; background-size: 1em; }
@@ -181,6 +189,7 @@
                 <span class="pulse-ring h-3 w-3 rounded-full bg-[#c6dd73]"></span>
                 <p class="text-lg font-extrabold text-[#c6dd73]">Proses Berjalan</p>
               </div>
+              <p id="lastUpdated" class="mt-2 pl-5 text-[10px] text-[#dce7d8]" aria-live="polite">Data diperbarui --:--:--</p>
             </div>
           </div>
         </section>
@@ -795,7 +804,7 @@
     </div>
     
     <!-- Toast Notifikasi (Desktop & Mobile) -->
-    <div id="toast" class="toast fixed bottom-6 sm:bottom-auto sm:top-6 left-1/2 -translate-x-1/2 sm:translate-x-0 sm:left-auto sm:right-6 z-50 flex items-center gap-3 rounded-2xl bg-[#112217] px-5 py-3.5 text-xs font-bold text-white shadow-2xl border border-white/10 w-[90%] sm:w-auto">
+    <div id="toast" class="toast fixed bottom-6 sm:bottom-auto sm:top-6 left-1/2 -translate-x-1/2 sm:translate-x-0 sm:left-auto sm:right-6 z-50 flex items-center gap-3 rounded-2xl bg-[#112217] px-5 py-3.5 text-xs font-bold text-white shadow-2xl border border-white/10 w-[90%] sm:w-auto" role="status" aria-live="polite">
       <i data-lucide="info" class="h-4 w-4 text-[#c6dd73] shrink-0"></i>
       <span id="toastMsg">Notifikasi</span>
     </div>
@@ -843,6 +852,14 @@
     }
     setInterval(updateRealtimeClock, 1000);
     updateRealtimeClock(); 
+
+    function updateLastUpdated() {
+      const updatedAt = document.getElementById('lastUpdated');
+      if (updatedAt) {
+        updatedAt.textContent = `Data diperbarui ${new Date().toLocaleTimeString('id-ID', { hour12: false })}`;
+      }
+    }
+    updateLastUpdated();
 
     // Navigasi Tab dengan Animasi Staggered yang halus
     document.querySelectorAll('.side-link').forEach(btn => {
@@ -946,6 +963,12 @@
       
       if (tempEl) tempEl.innerHTML = `${randomTemp}<span class="text-base font-medium text-[#66766c] ml-1">°C</span>`;
       if (phEl) phEl.textContent = randomPh;
+      [tempEl, phEl].filter(Boolean).forEach((element) => {
+        element.classList.remove('value-updated');
+        void element.offsetWidth;
+        element.classList.add('value-updated');
+      });
+      updateLastUpdated();
       
       showToast('Data sensor berhasil ditarik ulang dari server IoT.');
       
