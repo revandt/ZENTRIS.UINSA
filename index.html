@@ -136,6 +136,11 @@
               <i data-lucide="calendar-clock" class="h-3.5 w-3.5 text-[#c6dd73]"></i>
               <span id="realtimeClock" class="text-[11px] sm:text-xs font-bold tracking-wide">Memuat Waktu...</span>
             </div>
+            <!-- Tombol Lonceng Notifikasi -->
+            <button id="headerBellBtn" type="button" class="relative rounded-xl border border-[#dce4d8] bg-white p-2 text-[#183126] hover:bg-[#c6dd73]/30 transition shadow-sm shrink-0" title="Pusat Notifikasi">
+              <i data-lucide="bell" class="h-4 w-4"></i>
+              <span id="headerBellBadge" class="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#c83d35] text-[9px] font-bold text-white shadow-sm">2</span>
+            </button>
             <button id="refreshButton" type="button" class="rounded-xl border border-[#dce4d8] bg-white p-2 text-[#183126] hover:bg-[#c6dd73]/30 transition shadow-sm shrink-0">
               <i data-lucide="refresh-cw" class="h-4 w-4"></i>
             </button>
@@ -752,6 +757,16 @@
       setTimeout(() => { icon.style.transform = 'rotate(0deg)'; }, 400);
     };
 
+    // --- INTEGRASI KLIK IKON LONCENG DI HEADER ---
+    const headerBellBtn = document.getElementById('headerBellBtn');
+    if (headerBellBtn) {
+      headerBellBtn.onclick = () => {
+        const alertNavBtn = document.querySelector('.side-link[data-view="Alerts"]');
+        if (alertNavBtn) {
+          alertNavBtn.click();
+        }
+      };
+    }
     lucide.createIcons();
   </script>
 </body>
