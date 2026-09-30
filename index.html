@@ -37,7 +37,7 @@
     }
     .sidebar-overlay.show { opacity: 1; pointer-events: auto; }
 
-    .side-link { display: flex; align-items: center; gap: .8rem; width: 100%; padding: .8rem 1rem; border-radius: .8rem; color: #bbcec0; font-size: .88rem; font-weight: 600; transition: background-color .2s ease, color .2s ease, transform .2s ease; text-align: left; }
+    .side-link { display: flex; align-items: center; gap: .8rem; width: 100%; padding: .8rem 1rem; border-radius: .8rem; color: #bbcec0; font-size: .88rem; font-weight: 600; transition: background .2s ease, color .2s ease, transform .2s ease; }
     .side-link:hover { background: rgba(255, 255, 255, 0.08); color: white; transform: translateX(5px); }
     .side-link.active { background: #c6dd73; color: #112217; font-weight: 700; box-shadow: 0 8px 20px rgba(198,221,115,.25); }
     
@@ -53,12 +53,27 @@
 
     @keyframes slideFade { to { opacity: 1; } }
     @keyframes itemSlideUp { to { opacity: 1; transform: translateY(0); } }
-    .cycle-progress-sweep { background: linear-gradient(90deg, transparent, rgba(255,255,255,.95), transparent); animation: progressSweep 2.4s ease-in-out infinite; }
-    @keyframes progressSweep { from { transform: translateX(-120%); } to { transform: translateX(480%); } }
+    .cycle-progress-sweep {
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 26%;
+      min-width: 40px;
+      background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,.96) 38%, rgba(255,255,255,.88) 52%, transparent 100%);
+      filter: blur(.5px);
+      opacity: 0;
+      pointer-events: none;
+      animation: progressSweep 2.4s ease-in-out infinite;
+    }
+    @keyframes progressSweep {
+      0% { transform: translateX(-140%); opacity: 0; }
+      20% { opacity: 1; }
+      100% { transform: translateX(430%); opacity: 0; }
+    }
     
     /* Efek Pulse informatif pada status */
     .pulse-ring { position: relative; }
-    .pulse-ring::before { content: ''; position: absolute; left: -3px; top: -3px; width: calc(100% + 6px); height: calc(100% + 6px); background: #49783d; border-radius: 50%; z-index: 0; opacity: .6; animation: ringPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+    .pulse-ring::before { content: ''; position: absolute; left: -3px; top: -3px; width: calc(100% + 6px); height: calc(100% + 6px); background: #49783d; border-radius: 50%; z-index: 0; opacity: .45; animation: ringPulse 2.4s ease-out infinite; }
+    .pulse-ring::after { content: ''; position: absolute; inset: 0; border-radius: 50%; background: rgba(198,221,115,0.25); z-index: 0; }
     @keyframes ringPulse { 0% { transform: scale(0.8); opacity: 0.9; } 100% { transform: scale(1.6); opacity: 0; } }
     
     .floating-icon { transition: transform .25s ease; }
@@ -73,7 +88,7 @@
     }
 
     /* Inputs */
-    select.custom-select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23183126' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 1rem center; background-size: 1em; }
+    select.custom-select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23183126' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.9rem center; background-size: 1rem; }
     select.custom-select:focus, input.custom-input:focus, textarea.custom-input:focus { border-color: var(--forest); box-shadow: 0 0 0 3px rgba(198,221,115, 0.3); }
     
     /* Toast */
@@ -156,7 +171,6 @@
               <i data-lucide="calendar-clock" class="h-3.5 w-3.5 text-[#c6dd73]"></i>
               <span id="realtimeClock" class="text-[11px] sm:text-xs font-bold tracking-wide">Memuat Waktu...</span>
             </div>
-            <!-- Tombol Lonceng Notifikasi -->
             <button id="headerBellBtn" type="button" class="relative rounded-xl border border-[#dce4d8] bg-white p-2 text-[#183126] hover:bg-[#c6dd73]/30 transition shadow-sm shrink-0" title="Pusat Notifikasi">
               <i data-lucide="bell" class="h-4 w-4"></i>
               <span id="headerBellBadge" class="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#c83d35] text-[9px] font-bold text-white shadow-sm animate-pulse">2</span>
@@ -175,7 +189,7 @@
             <div>
               <div class="flex items-center gap-2 mb-3">
                 <span class="inline-block rounded-full bg-[#c6dd73] px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-[#112217] shadow-sm">Sistem Real-Time</span>
-                <span class="inline-block rounded-full border border-white/30 bg-white/10 px-3 py-1 text-[10px] font-bold text-white flex items-center gap-1"><span class="h-1.5 w-1.5 rounded-full bg-green-400 animate-pulse"></span> ESP32 Online</span>
+                <span class="inline-block rounded-full border border-white/30 bg-white/10 px-3 py-1 text-[10px] font-bold text-white flex items-center gap-1"><span class="h-1.5 w-1.5 rounded-full bg-[#c6dd73] animate-pulse"></span> Online</span>
               </div>
               <h2 class="font-extrabold text-2xl sm:text-3xl text-white tracking-tight">Monitoring Limbah RPA</h2>
               <p class="mt-2 max-w-lg text-xs sm:text-sm leading-relaxed text-[#dce7d8]">Pemantauan langsung parameter suhu, keasaman (pH), dan waktu proses pengolahan limbah cair.</p>
@@ -255,7 +269,7 @@
               <!-- Garis Background -->
               <div class="absolute top-3 left-0 w-full h-1.5 bg-gray-200 rounded-full overflow-hidden">
                 <div class="absolute inset-y-0 left-0 w-[35%] rounded-full bg-[#c6dd73] transition-all duration-1000"></div>
-                <span class="cycle-progress-sweep absolute inset-y-0 left-0 w-1/4" aria-hidden="true"></span>
+                <span class="cycle-progress-sweep absolute inset-y-0 left-0" aria-hidden="true"></span>
               </div>
               
               <!-- Titik-titik Tahapan -->
@@ -291,12 +305,10 @@
           <article class="animate-item card-anim bg-white rounded-3xl p-6 shadow-sm border border-[#dce4d8]">
             <div class="flex items-center justify-between mb-4 border-b border-gray-100 pb-3">
               <h4 class="font-bold text-base text-[#183126]">Aktivitas Sistem</h4>
-              <!-- Mengarahkan klik langsung ke tab Notifikasi -->
               <button onclick="document.querySelector('.side-link[data-view=\'Alerts\']').click()" class="text-[10px] font-bold text-[#66766c] hover:text-[#183126] transition">Lihat Semua</button>
             </div>
             
             <div class="space-y-4">
-              <!-- Item Log 1 -->
               <div class="flex items-start gap-3">
                 <div class="rounded-full bg-green-50 p-1.5 mt-0.5"><i data-lucide="zap" class="h-3.5 w-3.5 text-green-600"></i></div>
                 <div>
@@ -305,7 +317,6 @@
                 </div>
               </div>
               
-              <!-- Item Log 2 -->
               <div class="flex items-start gap-3">
                 <div class="rounded-full bg-blue-50 p-1.5 mt-0.5"><i data-lucide="droplets" class="h-3.5 w-3.5 text-blue-600"></i></div>
                 <div>
@@ -314,7 +325,6 @@
                 </div>
               </div>
 
-              <!-- Item Log 3 -->
               <div class="flex items-start gap-3">
                 <div class="rounded-full bg-gray-100 p-1.5 mt-0.5"><i data-lucide="refresh-ccw" class="h-3.5 w-3.5 text-gray-600"></i></div>
                 <div>
@@ -357,7 +367,7 @@
         <div class="animate-item glass-card rounded-3xl p-6 space-y-4">
           <div class="flex flex-wrap items-center justify-between gap-4">
             <h4 class="font-bold text-lg text-[#183126]">Log Sensor Otomatis</h4>
-            <button onclick="showToast('Mengunduh Log Data ke format Excel...')" class="rounded-xl bg-white border border-[#dce4d8] text-[#183126] px-4 py-2 text-xs font-bold shadow-sm hover:bg-slate-50 transition flex items-center gap-2 active:scale-95">
+            <button onclick="showToast('Mengunduh Log Data ke format Excel...')" class="rounded-xl bg-white border border-[#dce4d8] text-[#183126] px-4 py-2 text-xs font-bold shadow-sm hover:bg-[#f1f4ea] transition flex items-center gap-2">
               <i data-lucide="download" class="h-4 w-4"></i> Export Log
             </button>
           </div>
@@ -422,9 +432,9 @@
             </div>
             <div>
               <label class="block font-bold text-[#183126] mb-1.5 text-xs">Catatan Observasi (Bau, Warna Air, dll)</label>
-              <textarea placeholder="Contoh: Air tidak berbau menyengat, warna sedikit keruh..." rows="3" class="custom-input w-full rounded-xl border border-[#dce4d8] px-4 py-3 bg-slate-50 text-sm resize-none transition" required></textarea>
+              <textarea placeholder="Contoh: Air tidak berbau menyengat, warna sedikit keruh..." rows="3" class="custom-input w-full rounded-xl border border-[#dce4d8] px-4 py-3 bg-slate-50 text-sm transition"></textarea>
             </div>
-            <button type="submit" class="w-full sm:w-auto rounded-xl bg-[#112217] text-white px-6 py-3 font-bold shadow-md hover:bg-[#1a3a27] transition flex items-center justify-center gap-2 active:scale-95">
+            <button type="submit" class="w-full sm:w-auto rounded-xl bg-[#112217] text-white px-6 py-3 font-bold shadow-md hover:bg-[#1a3a27] transition flex items-center justify-center gap-2 active:scale-[0.99]">
               <i data-lucide="cloud-upload" class="h-4 w-4"></i> Simpan & Sinkronisasi
             </button>
           </form>
@@ -455,11 +465,11 @@
                 <span class="text-[9px] text-red-500 bg-white px-1 -mt-2 font-bold">Batas Maks (35°C)</span>
               </div>
               
-              <div class="h-[60%] flex-1 rounded-t-lg bg-[#e2e8f0] flex flex-col justify-end items-center pb-2 text-[10px] font-bold relative group cursor-pointer hover:bg-[#cbd5e1] transition-colors"><span class="absolute -top-7 opacity-0 group-hover:opacity-100 transition-opacity bg-[#183126] text-white px-2 py-1 rounded shadow text-xs pointer-events-none">28.0°</span><span class="text-gray-500">Sen</span></div>
-              <div class="h-[65%] flex-1 rounded-t-lg bg-[#cbd5e1] flex flex-col justify-end items-center pb-2 text-[10px] font-bold relative group cursor-pointer hover:bg-[#94a3b8] transition-colors"><span class="absolute -top-7 opacity-0 group-hover:opacity-100 transition-opacity bg-[#183126] text-white px-2 py-1 rounded shadow text-xs pointer-events-none">28.2°</span><span class="text-gray-600">Sel</span></div>
-              <div class="h-[75%] flex-1 rounded-t-lg bg-[#c6dd73] flex flex-col justify-end items-center pb-2 text-[10px] font-bold relative group cursor-pointer shadow-md"><span class="absolute -top-7 opacity-100 bg-[#183126] text-white px-2 py-1 rounded shadow text-xs pointer-events-none">28.5°</span><span class="text-[#183126]">Rab</span></div>
-              <div class="h-[70%] flex-1 rounded-t-lg bg-[#345c43] flex flex-col justify-end items-center pb-2 text-[10px] font-bold relative group cursor-pointer hover:bg-[#1e3e2b] transition-colors"><span class="absolute -top-7 opacity-0 group-hover:opacity-100 transition-opacity bg-[#183126] text-white px-2 py-1 rounded shadow text-xs pointer-events-none">28.4°</span><span class="text-white">Kam</span></div>
-              <div class="h-[72%] flex-1 rounded-t-lg bg-[#112217] flex flex-col justify-end items-center pb-2 text-[10px] font-bold relative group cursor-pointer hover:bg-black transition-colors"><span class="absolute -top-7 opacity-0 group-hover:opacity-100 transition-opacity bg-[#183126] text-white px-2 py-1 rounded shadow text-xs pointer-events-none">28.3°</span><span class="text-white">Jum</span></div>
+              <div class="h-[60%] flex-1 rounded-t-lg bg-[#e2e8f0] flex flex-col justify-end items-center pb-2 text-[10px] font-bold relative group cursor-pointer hover:bg-[#cbd5e1] transition-colors"><span class="absolute -top-5 text-[9px] text-[#66766c]">Sen</span></div>
+              <div class="h-[65%] flex-1 rounded-t-lg bg-[#cbd5e1] flex flex-col justify-end items-center pb-2 text-[10px] font-bold relative group cursor-pointer hover:bg-[#94a3b8] transition-colors"><span class="absolute -top-5 text-[9px] text-[#66766c]">Sel</span></div>
+              <div class="h-[75%] flex-1 rounded-t-lg bg-[#c6dd73] flex flex-col justify-end items-center pb-2 text-[10px] font-bold relative group cursor-pointer shadow-md"><span class="absolute -top-5 text-[9px] text-[#66766c]">Rab</span></div>
+              <div class="h-[70%] flex-1 rounded-t-lg bg-[#345c43] flex flex-col justify-end items-center pb-2 text-[10px] font-bold relative group cursor-pointer hover:bg-[#1e3e2b] transition-colors"><span class="absolute -top-5 text-[9px] text-[#66766c]">Kam</span></div>
+              <div class="h-[72%] flex-1 rounded-t-lg bg-[#112217] flex flex-col justify-end items-center pb-2 text-[10px] font-bold relative group cursor-pointer hover:bg-black transition-colors"><span class="absolute -top-5 text-[9px] text-[#66766c]">Jum</span></div>
             </div>
           </article>
 
@@ -525,11 +535,10 @@
                 </div>
               </div>
               <div class="flex items-center gap-3 self-start sm:self-auto">
-                <span class="flex items-center gap-1.5 rounded-full bg-green-50 text-green-700 px-3 py-1 text-[10px] font-bold border border-green-200"><span class="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse"></span> Online</span>
+                <span class="flex items-center gap-1.5 rounded-full bg-green-50 text-green-700 px-3 py-1 text-[10px] font-bold border border-green-200"><span class="h-1.5 w-1.5 rounded-full bg-green-500"></span> Online</span>
                 <button onclick="toggleDeviceDetail('devDetail1', this)" class="rounded-xl bg-[#f1f4ea] px-4 py-2 text-xs font-bold text-[#183126] hover:bg-[#c6dd73]/50 transition border border-[#dce4d8]">Lihat Detail</button>
               </div>
             </div>
-            <!-- Detail Content -->
             <div id="devDetail1" class="device-detail-wrap bg-slate-50 rounded-xl mt-0 px-4">
               <div class="py-4 text-xs text-[#4b5563] space-y-2 border-t border-slate-200 mt-4">
                 <p><b class="text-[#183126]">Spesifikasi:</b> Dual-Core Tensilica Xtensa 32-bit (240MHz), terintegrasi Wi-Fi 802.11 b/g/n & Bluetooth v4.2 BLE.</p>
@@ -616,13 +625,12 @@
             <h3 class="font-bold text-xl sm:text-2xl text-[#183126]">Pusat Notifikasi</h3>
             <p class="text-xs text-[#66766c] mt-1">Laporan peringatan sistem sensor dan aktivitas pompa.</p>
           </div>
-          <button onclick="markAllAsRead()" class="rounded-xl bg-white border border-[#dce4d8] text-[#183126] px-5 py-2.5 text-xs font-bold shadow-sm hover:bg-[#f1f4ea] transition flex items-center gap-2 active:scale-95">
+          <button onclick="markAllAsRead()" class="rounded-xl bg-white border border-[#dce4d8] text-[#183126] px-5 py-2.5 text-xs font-bold shadow-sm hover:bg-[#f1f4ea] transition flex items-center gap-2">
             <i data-lucide="check-check" class="h-4 w-4 text-green-600"></i> Tandai Semua Dibaca
           </button>
         </div>
 
         <div id="alertsContainer" class="space-y-4">
-          <!-- Alert 1 -->
           <article class="animate-item alert-item card-anim rounded-2xl border-l-4 border-l-amber-500 bg-white p-5 shadow-sm transition-all relative overflow-hidden">
             <div class="absolute right-0 top-0 w-24 h-24 bg-amber-50 rounded-bl-full -z-10"></div>
             <div class="flex items-start sm:items-center justify-between gap-4">
@@ -636,7 +644,6 @@
               <span class="shrink-0 rounded-md bg-amber-100 text-amber-800 font-bold px-2.5 py-1 text-[10px]">Perlu Tindakan</span>
             </div>
           </article>
-          <!-- Alert 2 -->
           <article class="animate-item alert-item card-anim rounded-2xl border-l-4 border-l-blue-500 bg-white p-5 shadow-sm transition-all relative overflow-hidden">
             <div class="absolute right-0 top-0 w-24 h-24 bg-blue-50 rounded-bl-full -z-10"></div>
             <div class="flex items-start sm:items-center justify-between gap-4">
@@ -661,12 +668,10 @@
         </div>
 
         <div class="grid gap-6 xl:grid-cols-2">
-          <!-- Parameter IoT Card -->
           <article class="animate-item card-anim bg-white rounded-3xl p-7 shadow-md border border-[#dce4d8]">
             <h4 class="font-bold text-lg text-[#183126] mb-5">Mode Operasional & Threshold</h4>
             
             <div class="space-y-6 text-sm">
-              <!-- Mode Pompa -->
               <div>
                 <label class="block font-bold text-[#183126] mb-2 text-xs uppercase tracking-wide">Mode Kontrol Pompa</label>
                 <select class="custom-select w-full rounded-xl border border-[#dce4d8] px-4 py-3 bg-white text-[#183126] font-medium shadow-sm transition hover:border-[#183126] cursor-pointer">
@@ -676,13 +681,12 @@
                 </select>
               </div>
 
-              <!-- Input UP/DOWN Keren -->
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div>
                   <label class="block font-bold text-[#183126] mb-2 text-xs uppercase tracking-wide">Batas Maks. Suhu (°C)</label>
                   <div class="flex items-center bg-slate-50 border border-[#dce4d8] rounded-xl overflow-hidden shadow-inner">
                     <button type="button" onclick="changeVal('tempInp', -1)" class="w-12 py-3 bg-white hover:bg-gray-100 text-[#183126] font-bold border-r border-[#dce4d8] transition-colors">-</button>
-                    <input id="tempInp" type="number" min="20" max="45" value="35" class="w-full text-center bg-transparent py-3 font-bold text-[#183126] appearance-none" style="-moz-appearance: textfield; outline:none;">
+                    <input id="tempInp" type="number" min="20" max="45" value="35" class="w-full text-center bg-transparent py-3 font-bold text-[#183126] appearance-none" style="-moz-appearance: textfield;">
                     <button type="button" onclick="changeVal('tempInp', 1)" class="w-12 py-3 bg-white hover:bg-gray-100 text-[#183126] font-bold border-l border-[#dce4d8] transition-colors">+</button>
                   </div>
                 </div>
@@ -691,35 +695,34 @@
                   <label class="block font-bold text-[#183126] mb-2 text-xs uppercase tracking-wide">Siklus Reaktor (Jam)</label>
                   <div class="flex items-center bg-slate-50 border border-[#dce4d8] rounded-xl overflow-hidden shadow-inner">
                     <button type="button" onclick="changeVal('cycleInp', -1)" class="w-12 py-3 bg-white hover:bg-gray-100 text-[#183126] font-bold border-r border-[#dce4d8] transition-colors">-</button>
-                    <input id="cycleInp" type="number" min="1" max="48" value="18" class="w-full text-center bg-transparent py-3 font-bold text-[#183126] appearance-none" style="-moz-appearance: textfield; outline:none;">
+                    <input id="cycleInp" type="number" min="1" max="48" value="18" class="w-full text-center bg-transparent py-3 font-bold text-[#183126] appearance-none" style="-moz-appearance: textfield;">
                     <button type="button" onclick="changeVal('cycleInp', 1)" class="w-12 py-3 bg-white hover:bg-gray-100 text-[#183126] font-bold border-l border-[#dce4d8] transition-colors">+</button>
                   </div>
                 </div>
               </div>
               
               <div class="pt-2">
-                <button onclick="showToast('Parameter kontrol berhasil disimpan & disinkronkan ke ESP32!')" class="w-full rounded-xl bg-[#112217] text-white py-3.5 text-sm font-bold shadow-md hover:bg-[#1a3a27] hover:shadow-lg transition-all active:scale-[0.98]">Simpan Parameter Operasional</button>
+                <button onclick="showToast('Parameter kontrol berhasil disimpan & disinkronkan ke ESP32!')" class="w-full rounded-xl bg-[#112217] text-white py-3.5 text-sm font-bold shadow-md hover:bg-[#1a3a27] transition">Simpan Parameter</button>
               </div>
             </div>
           </article>
 
-          <!-- Jaringan Card -->
           <article class="animate-item card-anim bg-white rounded-3xl p-7 shadow-md border border-[#dce4d8]">
             <h4 class="font-bold text-lg text-[#183126] mb-5">Konektivitas Jaringan Wi-Fi</h4>
             <div class="space-y-4 text-sm">
               <div>
                 <label class="block font-bold text-[#183126] mb-2 text-xs uppercase tracking-wide">Jaringan SSID</label>
-                <input type="text" value="ZENTRIS_Simorejo_Hotspot" class="custom-input w-full rounded-xl border border-[#dce4d8] px-4 py-3 bg-slate-50 text-[#183126] font-medium transition focus:bg-white shadow-inner">
+                <input type="text" value="ZENTRIS_Simorejo_Hotspot" class="custom-input w-full rounded-xl border border-[#dce4d8] px-4 py-3 bg-slate-50 text-[#183126] font-medium transition focus:border-[#183126]">
               </div>
               <div>
                 <label class="block font-bold text-[#183126] mb-2 text-xs uppercase tracking-wide">MQTT Broker URL</label>
                 <div class="relative">
-                  <input type="text" value="mqtt.ZENTRIS-iot.cloud" class="custom-input w-full rounded-xl border border-[#dce4d8] px-4 py-3 bg-slate-50 text-[#183126] font-medium transition focus:bg-white shadow-inner pr-10">
+                  <input type="text" value="mqtt.ZENTRIS-iot.cloud" class="custom-input w-full rounded-xl border border-[#dce4d8] px-4 py-3 bg-slate-50 text-[#183126] font-medium transition focus:border-[#183126]">
                   <i data-lucide="cloud" class="absolute right-3 top-3.5 h-4 w-4 text-gray-400"></i>
                 </div>
               </div>
               <div class="pt-2">
-                <button onclick="showToast('Konfigurasi jaringan berhasil diperbarui.')" class="w-full rounded-xl border-2 border-[#183126] bg-transparent text-[#183126] py-3 font-bold hover:bg-slate-50 transition-all active:scale-[0.98]">Terapkan ke Hardware</button>
+                <button onclick="showToast('Konfigurasi jaringan berhasil diperbarui.')" class="w-full rounded-xl border-2 border-[#183126] bg-transparent text-[#183126] py-3 font-bold hover:bg-[#f1f4ea] transition">Perbarui Wi-Fi</button>
               </div>
             </div>
           </article>
@@ -733,13 +736,10 @@
           <p class="text-xs text-[#66766c] mt-1">Informasi lengkap mengenai proyek ZENTRIS, lisensi akademik, serta profil tim pengembang.</p>
         </div>
 
-        <!-- 1 KOTAK BESAR UTAMA -->
         <article class="animate-item card-anim bg-white rounded-3xl p-6 sm:p-8 shadow-md border border-[#dce4d8] space-y-6">
-          
           <div class="flex flex-col lg:flex-row gap-8 items-center border-b border-gray-100 pb-6">
-            <!-- Tempat Foto 3 Orang (Upload file tim.jpg ke GitHub) -->
             <div class="w-full lg:w-1/3 shrink-0 flex flex-col items-center group">
-              <div class="w-full h-56 rounded-2xl overflow-hidden border-2 border-[#183126] bg-slate-100 shadow-md flex items-center justify-center relative transition-transform duration-300 group-hover:scale-105">
+              <div class="w-full h-56 rounded-2xl overflow-hidden border-2 border-[#183126] bg-slate-100 shadow-md flex items-center justify-center relative transition-transform duration-300 group-hover:scale-[1.01]">
                 <img src="tim.jpg" alt="Foto Anggota Tim ZENTRIS" class="w-full h-full object-cover transition duration-300" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                 <div class="absolute inset-0 flex flex-col items-center justify-center text-center p-4 bg-slate-100 text-gray-500" style="display: none;">
                   <i data-lucide="users" class="h-10 w-10 mb-2 text-[#183126] animate-pulse"></i>
@@ -750,27 +750,24 @@
               <p class="text-[11px] font-bold text-[#66766c] mt-4 uppercase tracking-wide bg-gray-50 px-3 py-1 rounded-full border border-gray-200">Dokumentasi Tim Pengembang</p>
             </div>
 
-            <!-- Penjelasan Ringkas Proyek & Lisensi -->
             <div class="w-full lg:w-2/3 space-y-3 text-xs sm:text-sm text-[#374151]">
               <h4 class="font-extrabold text-xl text-[#183126]">ZENTRIS - IoT Wastewater Monitoring System</h4>
               <p class="leading-relaxed text-gray-600">
-                Sistem pemantauan pengolahan limbah cair otomatis berbasis Internet of Things (IoT) yang dirancang untuk memantau parameter suhu, keasaman (pH), dan waktu sirkulasi reaktor secara <i>real-time</i>.
+                Sistem pemantauan pengolahan limbah cair otomatis berbasis Internet of Things (IoT) yang dirancang untuk memantau parameter suhu, keasaman (pH), dan waktu sirkulasi reaktor secara real-time.
               </p>
               <div class="pt-3 mt-3 border-t border-gray-100 space-y-2">
-                <p class="flex items-start gap-2"><i data-lucide="building-2" class="h-4 w-4 mt-0.5 text-[#66766c]"></i> <span><b class="text-[#183126]">Institusi Akademik:</b><br>Fakultas Sains dan Teknologi, Universitas Islam Negeri Sunan Ampel Surabaya (UINSA).</span></p>
-                <p class="flex items-start gap-2"><i data-lucide="file-check-2" class="h-4 w-4 mt-0.5 text-[#66766c]"></i> <span><b class="text-[#183126]">Lisensi & Legalitas:</b><br>Open Source Academic License. Seluruh hak cipta kode, skema sensor, dan desain sistem dilindungi untuk keperluan riset dan edukasi lingkungan.</span></p>
+                <p class="flex items-start gap-2"><i data-lucide="building-2" class="h-4 w-4 mt-0.5 text-[#66766c]"></i> <span><b class="text-[#183126]">Institusi Akademik:</b><br>Fakultas Sains dan Teknologi, UINSA.</span></p>
+                <p class="flex items-start gap-2"><i data-lucide="file-check-2" class="h-4 w-4 mt-0.5 text-[#66766c]"></i> <span><b class="text-[#183126]">Lisensi & Legalitas:</b><br>Open Source untuk kebutuhan riset dan pengembangan teknologi lingkungan.</span></p>
               </div>
             </div>
           </div>
 
-          <!-- Bagian Daftar Anggota Tim Sesuai Validasi -->
           <div class="space-y-4">
             <h5 class="font-bold text-sm text-[#183126] uppercase tracking-wider flex items-center gap-2">
               <i data-lucide="user-check" class="h-5 w-5 text-[#c6dd73]"></i> Anggota Tim Pengembang & Peneliti
             </h5>
 
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
-              <!-- Anggota 1 -->
               <div class="rounded-2xl border border-gray-200 p-4 bg-[#f8faf6] space-y-1.5 shadow-sm hover:shadow-md transition-all hover:-translate-y-1">
                 <span class="inline-block bg-[#c6dd73] text-[#112217] font-bold px-2 py-0.5 rounded text-[10px]">Ketua / Anggota 1</span>
                 <p class="font-extrabold text-[#183126] text-sm mt-1">Ahmad Rofi’</p>
@@ -778,7 +775,6 @@
                 <p class="text-[#66766c] pt-2 border-t border-gray-200 flex items-center gap-1"><i data-lucide="graduation-cap" class="h-3.5 w-3.5"></i> S1 Teknik Lingkungan</p>
               </div>
 
-              <!-- Anggota 2 -->
               <div class="rounded-2xl border border-gray-200 p-4 bg-[#f8faf6] space-y-1.5 shadow-sm hover:shadow-md transition-all hover:-translate-y-1">
                 <span class="inline-block bg-[#c6dd73] text-[#112217] font-bold px-2 py-0.5 rounded text-[10px]">Anggota 2</span>
                 <p class="font-extrabold text-[#183126] text-sm mt-1">Ade Revandio Triandhoko</p>
@@ -786,7 +782,6 @@
                 <p class="text-[#66766c] pt-2 border-t border-gray-200 flex items-center gap-1"><i data-lucide="graduation-cap" class="h-3.5 w-3.5"></i> S1 Teknik Lingkungan</p>
               </div>
 
-              <!-- Anggota 3 -->
               <div class="rounded-2xl border border-gray-200 p-4 bg-[#f8faf6] space-y-1.5 shadow-sm hover:shadow-md transition-all hover:-translate-y-1">
                 <span class="inline-block bg-[#c6dd73] text-[#112217] font-bold px-2 py-0.5 rounded text-[10px]">Anggota 3</span>
                 <p class="font-extrabold text-[#183126] text-sm mt-1">Lisha Mar’atul Muthmainnah</p>
@@ -795,14 +790,13 @@
               </div>
             </div>
           </div>
-
         </article>
       </main>
 
     </div>
     
     <!-- Toast Notifikasi (Desktop & Mobile) -->
-    <div id="toast" class="toast fixed bottom-6 sm:bottom-auto sm:top-6 left-1/2 -translate-x-1/2 sm:translate-x-0 sm:left-auto sm:right-6 z-50 flex items-center gap-3 rounded-2xl bg-[#112217] px-5 py-3.5 text-xs font-bold text-white shadow-2xl border border-white/10 w-[90%] sm:w-auto" role="status" aria-live="polite">
+    <div id="toast" class="toast fixed bottom-6 sm:bottom-auto sm:top-6 left-1/2 -translate-x-1/2 sm:translate-x-0 sm:left-auto sm:right-6 z-50 flex items-center gap-3 rounded-2xl bg-[#112217] px-4 py-3 text-white shadow-2xl">
       <i data-lucide="info" class="h-4 w-4 text-[#c6dd73] shrink-0"></i>
       <span id="toastMsg">Notifikasi</span>
     </div>
@@ -822,10 +816,10 @@
       });
     });
 
-    function showToast(message) { 
-      toastMsg.textContent = message; 
-      toast.classList.add('show'); 
-      setTimeout(() => toast.classList.remove('show'), 3000); 
+    function showToast(message) {
+      toastMsg.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3000);
     }
 
     function toggleSidebar(open) {
@@ -842,20 +836,18 @@
     closeSidebarBtn.onclick = () => toggleSidebar(false);
     sidebarOverlay.onclick = () => toggleSidebar(false);
 
-    // Update Jam & Tanggal secara real-time
     function updateRealtimeClock() {
       const now = new Date();
       const dateOptions = { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' };
       const dateString = now.toLocaleDateString('id-ID', dateOptions);
       const timeString = now.toLocaleTimeString('id-ID', { hour12: false, hour: '2-digit', minute:'2-digit', second:'2-digit' });
-      
       const clockEl = document.getElementById('realtimeClock');
       if (clockEl) {
         clockEl.innerHTML = `${dateString} &nbsp;|&nbsp; <span class="text-[#c6dd73] font-black tracking-widest">${timeString}</span>`;
       }
     }
     setInterval(updateRealtimeClock, 1000);
-    updateRealtimeClock(); 
+    updateRealtimeClock();
 
     function updateLastUpdated() {
       const updatedAt = document.getElementById('lastUpdated');
@@ -865,27 +857,24 @@
     }
     updateLastUpdated();
 
-    // Navigasi Tab dengan Animasi Staggered yang halus
     document.querySelectorAll('.side-link').forEach(btn => {
       btn.onclick = () => {
         const view = btn.dataset.view;
         document.querySelectorAll('.side-link').forEach(x => x.classList.remove('active'));
         btn.classList.add('active');
-        
-        // Reset animasi pada tab lama dan tampilkan tab baru
+
         document.querySelectorAll('.tab-view').forEach(v => {
           v.classList.remove('active');
-          // Memastikan animasi item-item di dalamnya diulang saat dibuka lagi
           const items = v.querySelectorAll('.animate-item');
           items.forEach(item => {
             item.style.animation = 'none';
-            item.offsetHeight; // Trigger reflow
+            item.offsetHeight;
             item.style.animation = null; 
           });
         });
-        
+
         document.getElementById(view + 'View').classList.add('active');
-        
+
         const titles = {
           'Dashboard': 'Dashboard Utama',
           'Reports': 'Laporan (Input Data & Sensor)',
@@ -895,37 +884,33 @@
           'Settings': 'Pengaturan Sistem',
           'About': 'About, Lisensi & Anggota Tim'
         };
-        
-        // Animasi Judul Header saat berganti tab
+
         const viewTitle = document.getElementById('viewTitle');
         viewTitle.style.opacity = '0';
         setTimeout(() => {
           viewTitle.textContent = titles[view] || 'ZENTRIS Monitoring';
           viewTitle.style.opacity = '1';
         }, 150);
-        
+
         toggleSidebar(false);
       };
     });
 
-    // Accordion Toggle Device Detail dengan perubahan warna tombol
     function toggleDeviceDetail(id, btnElement) {
       const el = document.getElementById(id);
-      
       if (el.classList.contains('open')) {
         el.classList.remove('open');
-        btnElement.textContent = "Lihat Detail";
+        btnElement.textContent = 'Lihat Detail';
         btnElement.classList.remove('bg-[#c6dd73]', 'text-[#112217]');
         btnElement.classList.add('bg-[#f1f4ea]', 'text-[#183126]');
       } else {
         el.classList.add('open');
-        btnElement.textContent = "Tutup Detail";
+        btnElement.textContent = 'Tutup Detail';
         btnElement.classList.remove('bg-[#f1f4ea]', 'text-[#183126]');
         btnElement.classList.add('bg-[#c6dd73]', 'text-[#112217]');
       }
     }
 
-    // Tandai Semua Notifikasi Dibaca
     function markAllAsRead() {
       const alerts = document.querySelectorAll('.alert-item');
       alerts.forEach(item => {
@@ -941,30 +926,25 @@
       if (badgeCount) badgeCount.style.display = 'none';
       const headerBadgeCount = document.getElementById('headerBellBadge');
       if (headerBadgeCount) headerBadgeCount.style.display = 'none';
-      
       showToast('Semua peringatan telah ditandai selesai/dibaca.');
     }
 
-    // Up/Down Value Controller untuk Settings
     function changeVal(inputId, amount) {
       const inp = document.getElementById(inputId);
       let currentVal = parseInt(inp.value) || 0;
       let min = parseInt(inp.min) || 0;
       let max = parseInt(inp.max) || 100;
-      
       let newVal = currentVal + amount;
       if(newVal >= min && newVal <= max) {
         inp.value = newVal;
       }
     }
 
-    // Tombol Refresh pada Dashboard (Update Angka Secara Acak & Animasi Muter)
     document.getElementById('refreshButton').onclick = () => {
-      const randomTemp = (28.0 + (Math.random() * 0.9)).toFixed(1); 
+      const randomTemp = (28.0 + (Math.random() * 0.9)).toFixed(1);
       const randomPh = (6.7 + (Math.random() * 0.4)).toFixed(1);
       const tempEl = document.getElementById('dashTemp');
       const phEl = document.getElementById('dashPh');
-      
       if (tempEl) tempEl.innerHTML = `${randomTemp}<span class="text-base font-medium text-[#66766c] ml-1">°C</span>`;
       if (phEl) phEl.textContent = randomPh;
       [tempEl, phEl].filter(Boolean).forEach((element) => {
@@ -973,20 +953,16 @@
         element.classList.add('value-updated');
       });
       updateLastUpdated();
-      
       showToast('Data sensor berhasil ditarik ulang dari server IoT.');
-      
-      // Animasi Putar Tombol Refresh
       const icon = document.querySelector('#refreshButton i');
       icon.style.transform = 'rotate(360deg)';
-      setTimeout(() => { 
+      setTimeout(() => {
         icon.style.transition = 'none';
-        icon.style.transform = 'rotate(0deg)'; 
+        icon.style.transform = 'rotate(0deg)';
         setTimeout(() => { icon.style.transition = 'transform 0.5s ease'; }, 50);
       }, 500);
     };
 
-    // --- INTEGRASI KLIK IKON LONCENG DI HEADER ---
     const headerBellBtn = document.getElementById('headerBellBtn');
     if (headerBellBtn) {
       headerBellBtn.onclick = () => {
@@ -996,9 +972,10 @@
         }
       };
     }
-    
-    // Inisialisasi ikon Lucide
-    lucide.createIcons();
+
+    if (window.lucide) {
+      lucide.createIcons();
+    }
   </script>
 </body>
 </html>
