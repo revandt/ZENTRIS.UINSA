@@ -792,28 +792,88 @@
 
         <div class="grid gap-6 xl:grid-cols-2">
           <article class="animate-item card-anim bg-white rounded-3xl p-7 shadow-md border border-[#dce4d8]">
-            <h4 class="font-bold text-lg text-[#183126] mb-5">Mode Operasional & Threshold</h4>
-            
+            <h4 class="font-bold text-lg text-[#183126] mb-5">Profil Instalasi & Sistem</h4>
+
+            <div class="space-y-5 text-sm">
+              <div>
+                <label class="block font-bold text-[#183126] mb-2 text-xs uppercase tracking-wide">Nama Unit / Instalasi</label>
+                <input type="text" value="ZENTRIS UINSA - Reaktor 01" class="custom-input w-full rounded-xl border border-[#dce4d8] px-4 py-3 bg-slate-50 text-[#183126] font-medium transition focus:border-[#183126]">
+              </div>
+
+              <div>
+                <label class="block font-bold text-[#183126] mb-2 text-xs uppercase tracking-wide">Lokasi Operasional</label>
+                <input type="text" value="Laboratorium Limbah Cair, Fakultas Sains & Teknologi, UINSA" class="custom-input w-full rounded-xl border border-[#dce4d8] px-4 py-3 bg-slate-50 text-[#183126] font-medium transition focus:border-[#183126]">
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div>
+                  <label class="block font-bold text-[#183126] mb-2 text-xs uppercase tracking-wide">Zona Unit</label>
+                  <select class="custom-select w-full rounded-xl border border-[#dce4d8] px-4 py-3 bg-white text-[#183126] font-medium shadow-sm transition hover:border-[#183126] cursor-pointer">
+                    <option value="pre-treatment" selected>Pengolahan Awal</option>
+                    <option value="secondary">Pengolahan Sekunder</option>
+                    <option value="final">Outlet / Final</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label class="block font-bold text-[#183126] mb-2 text-xs uppercase tracking-wide">Zona Waktu</label>
+                  <select class="custom-select w-full rounded-xl border border-[#dce4d8] px-4 py-3 bg-white text-[#183126] font-medium shadow-sm transition hover:border-[#183126] cursor-pointer">
+                    <option value="WIB" selected>WIB (UTC+7)</option>
+                    <option value="WITA">WITA (UTC+8)</option>
+                    <option value="WIT">WIT (UTC+9)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="pt-2">
+                <button onclick="showToast('Profil instalasi berhasil disimpan ke konfigurasi sistem.')" class="w-full rounded-xl bg-[#112217] text-white py-3.5 text-sm font-bold shadow-md hover:bg-[#1a3a27] transition">Simpan Profil</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="animate-item card-anim bg-white rounded-3xl p-7 shadow-md border border-[#dce4d8]">
+            <h4 class="font-bold text-lg text-[#183126] mb-5">Mode Kontrol & Jaringan</h4>
+
             <div class="space-y-6 text-sm">
               <div>
-                <label class="block font-bold text-[#183126] mb-2 text-xs uppercase tracking-wide">Mode Kontrol Pompa</label>
+                <label class="block font-bold text-[#183126] mb-2 text-xs uppercase tracking-wide">Mode Operasional</label>
                 <select class="custom-select w-full rounded-xl border border-[#dce4d8] px-4 py-3 bg-white text-[#183126] font-medium shadow-sm transition hover:border-[#183126] cursor-pointer">
                   <option value="auto" selected>Otomatis (Berdasarkan Sensor & RTC)</option>
                   <option value="manual">Manual (Override Langsung)</option>
-                  <option value="timed">Terjadwal (Timed Relay)</option>
+                  <option value="timed">Terjadwal (Timer Relay)</option>
                 </select>
               </div>
 
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div>
-                  <label class="block font-bold text-[#183126] mb-2 text-xs uppercase tracking-wide">Batas Maks. Suhu (°C)</label>
+                  <label class="block font-bold text-[#183126] mb-2 text-xs uppercase tracking-wide">Batas Suhu Maks. (°C)</label>
                   <div class="flex items-center bg-slate-50 border border-[#dce4d8] rounded-xl overflow-hidden shadow-inner">
                     <button type="button" onclick="changeVal('tempInp', -1)" class="w-12 py-3 bg-white hover:bg-gray-100 text-[#183126] font-bold border-r border-[#dce4d8] transition-colors">-</button>
                     <input id="tempInp" type="number" min="20" max="45" value="35" class="w-full text-center bg-transparent py-3 font-bold text-[#183126] appearance-none" style="appearance: textfield; -moz-appearance: textfield; outline:none;">
                     <button type="button" onclick="changeVal('tempInp', 1)" class="w-12 py-3 bg-white hover:bg-gray-100 text-[#183126] font-bold border-l border-[#dce4d8] transition-colors">+</button>
                   </div>
                 </div>
-                
+
+                <div>
+                  <label class="block font-bold text-[#183126] mb-2 text-xs uppercase tracking-wide">Interval Sampling (Menit)</label>
+                  <div class="flex items-center bg-slate-50 border border-[#dce4d8] rounded-xl overflow-hidden shadow-inner">
+                    <button type="button" onclick="changeVal('sampleInp', -1)" class="w-12 py-3 bg-white hover:bg-gray-100 text-[#183126] font-bold border-r border-[#dce4d8] transition-colors">-</button>
+                    <input id="sampleInp" type="number" min="1" max="30" value="5" class="w-full text-center bg-transparent py-3 font-bold text-[#183126] appearance-none" style="appearance: textfield; -moz-appearance: textfield; outline:none;">
+                    <button type="button" onclick="changeVal('sampleInp', 1)" class="w-12 py-3 bg-white hover:bg-gray-100 text-[#183126] font-bold border-l border-[#dce4d8] transition-colors">+</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div>
+                  <label class="block font-bold text-[#183126] mb-2 text-xs uppercase tracking-wide">pH Minimal</label>
+                  <div class="flex items-center bg-slate-50 border border-[#dce4d8] rounded-xl overflow-hidden shadow-inner">
+                    <button type="button" onclick="changeVal('phMinInp', -1)" class="w-12 py-3 bg-white hover:bg-gray-100 text-[#183126] font-bold border-r border-[#dce4d8] transition-colors">-</button>
+                    <input id="phMinInp" type="number" min="4" max="9" step="0.1" value="6.2" class="w-full text-center bg-transparent py-3 font-bold text-[#183126] appearance-none" style="appearance: textfield; -moz-appearance: textfield; outline:none;">
+                    <button type="button" onclick="changeVal('phMinInp', 1)" class="w-12 py-3 bg-white hover:bg-gray-100 text-[#183126] font-bold border-l border-[#dce4d8] transition-colors">+</button>
+                  </div>
+                </div>
+
                 <div>
                   <label class="block font-bold text-[#183126] mb-2 text-xs uppercase tracking-wide">Siklus Reaktor (Jam)</label>
                   <div class="flex items-center bg-slate-50 border border-[#dce4d8] rounded-xl overflow-hidden shadow-inner">
@@ -823,29 +883,22 @@
                   </div>
                 </div>
               </div>
-              
-              <div class="pt-2">
-                <button onclick="showToast('Parameter kontrol berhasil disimpan & disinkronkan ke ESP32!')" class="w-full rounded-xl bg-[#112217] text-white py-3.5 text-sm font-bold shadow-md hover:bg-[#1a3a27] transition">Simpan Parameter</button>
-              </div>
-            </div>
-          </article>
 
-          <article class="animate-item card-anim bg-white rounded-3xl p-7 shadow-md border border-[#dce4d8]">
-            <h4 class="font-bold text-lg text-[#183126] mb-5">Konektivitas Jaringan Wi-Fi</h4>
-            <div class="space-y-4 text-sm">
               <div>
                 <label class="block font-bold text-[#183126] mb-2 text-xs uppercase tracking-wide">Jaringan SSID</label>
                 <input type="text" value="ZENTRIS_Simorejo_Hotspot" class="custom-input w-full rounded-xl border border-[#dce4d8] px-4 py-3 bg-slate-50 text-[#183126] font-medium transition focus:border-[#183126]">
               </div>
+
               <div>
                 <label class="block font-bold text-[#183126] mb-2 text-xs uppercase tracking-wide">MQTT Broker URL</label>
                 <div class="relative">
-                  <input type="text" value="mqtt.ZENTRIS-iot.cloud" class="custom-input w-full rounded-xl border border-[#dce4d8] px-4 py-3 bg-slate-50 text-[#183126] font-medium transition focus:border-[#183126]">
+                  <input type="text" value="mqtt.zentris-iot.local" class="custom-input w-full rounded-xl border border-[#dce4d8] px-4 py-3 bg-slate-50 text-[#183126] font-medium transition focus:border-[#183126]">
                   <i data-lucide="cloud" class="absolute right-3 top-3.5 h-4 w-4 text-gray-400"></i>
                 </div>
               </div>
+
               <div class="pt-2">
-                <button onclick="showToast('Konfigurasi jaringan berhasil diperbarui.')" class="w-full rounded-xl border-2 border-[#183126] bg-transparent text-[#183126] py-3 font-bold hover:bg-[#f1f4ea] transition">Perbarui Wi-Fi</button>
+                <button onclick="showToast('Konfigurasi kontrol dan jaringan berhasil diperbarui.')" class="w-full rounded-xl border-2 border-[#183126] bg-transparent text-[#183126] py-3 font-bold hover:bg-[#f1f4ea] transition">Perbarui Konfigurasi</button>
               </div>
             </div>
           </article>
@@ -1054,12 +1107,16 @@
 
     function changeVal(inputId, amount) {
       const inp = document.getElementById(inputId);
-      let currentVal = parseInt(inp.value) || 0;
-      let min = parseInt(inp.min) || 0;
-      let max = parseInt(inp.max) || 100;
-      let newVal = currentVal + amount;
+      if (!inp) return;
+
+      const currentVal = parseFloat(inp.value) || 0;
+      const min = parseFloat(inp.min) || 0;
+      const max = parseFloat(inp.max) || 100;
+      const step = parseFloat(inp.step) || 1;
+      const newVal = currentVal + (amount * step);
+
       if(newVal >= min && newVal <= max) {
-        inp.value = newVal;
+        inp.value = Number(newVal.toFixed(1)).toString();
       }
     }
 
