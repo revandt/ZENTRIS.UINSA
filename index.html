@@ -1156,14 +1156,14 @@
       const padding = 18;
       const points = 48;
 
-      function buildLineData(timeOffset, base, amplitude, phaseShift, isPh) {
+      function buildLineData(offset, base, amplitude, phaseShift, isPh) {
         const values = [];
         for (let i = 0; i < points; i += 1) {
           const progress = i / (points - 1);
           const x = padding + progress * (width - padding * 2);
-          const waveA = Math.sin((i * 0.42) + timeOffset * 1.8 + phaseShift) * amplitude;
-          const waveB = Math.sin((i * 0.14) - timeOffset * 0.9 + phaseShift * 0.7) * (amplitude * 0.45);
-          const gentleTrend = (progress - 0.5) * (isPh ? 0.9 : 2.2);
+          const waveA = Math.sin((i * 0.35) + offset * 0.9 + phaseShift) * amplitude;
+          const waveB = Math.sin((i * 0.18) - offset * 0.65 + phaseShift * 0.8) * (amplitude * 0.35);
+          const gentleTrend = (progress - 0.5) * (isPh ? 0.7 : 1.4);
           const value = base + waveA + waveB + gentleTrend;
           values.push({ x, value });
         }
@@ -1181,16 +1181,15 @@
       }
 
       function tick() {
-        const time = performance.now() * 0.0006;
-        const tempData = buildLineData(time, 28.8, 1.6, 0.6, false);
-        const phData = buildLineData(time + 1.2, 6.6, 0.38, 1.1, true);
+        const time = performance.now() * 0.00025;
+        const tempData = buildLineData(time, 28.8, 1.2, 0.6, false);
+        const phData = buildLineData(time + 1.1, 6.6, 0.28, 1.1, true);
 
-        tempPath.setAttribute('d', toPath(tempData, 25.6, 33.5));
-        phPath.setAttribute('d', toPath(phData, 5.8, 7.6));
-        requestAnimationFrame(tick);
+        tempPath.setAttribute('d', toPath(tempData, 25.8, 32.8));
+        phPath.setAttribute('d', toPath(phData, 5.9, 7.3));
       }
 
-      requestAnimationFrame(tick);
+      tick();
     }
 
     animateAnalyticsCharts();
