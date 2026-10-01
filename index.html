@@ -18,13 +18,17 @@
       --line: #dce4d8;
     }
     * { box-sizing: border-box; }
-    body { margin: 0; color: var(--ink); font-family: "Plus Jakarta Sans", sans-serif; background: var(--cream); overflow-x: hidden; }
+    body { margin: 0; color: var(--ink); font-family: "Plus Jakarta Sans", sans-serif; background: var(--cream); overflow-x: hidden; -webkit-user-select: none; user-select: none; }
     button, input, select, textarea { font: inherit; outline: none; }
     img {
       -webkit-user-drag: none;
       user-drag: none;
       user-select: none;
       pointer-events: none;
+    }
+    p, span, h1, h2, h3, h4, h5, h6, div, label, button, a, li {
+      -webkit-user-select: none;
+      user-select: none;
     }
     
     .app-shell { width: 100%; min-height: 100vh; background: radial-gradient(circle at 85% 10%, rgba(198,221,115,.20), transparent 30rem), var(--cream); }
@@ -1029,14 +1033,43 @@
 
     document.addEventListener('contextmenu', (event) => {
       const target = event.target;
-      if (target && target.closest && target.closest('img')) {
+      if (target && target.closest && (target.closest('img') || target.closest('p, span, h1, h2, h3, h4, h5, h6, div, label, button, a, li'))) {
         event.preventDefault();
       }
     });
 
     document.addEventListener('dragstart', (event) => {
       const target = event.target;
-      if (target && target.closest && target.closest('img')) {
+      if (target && target.closest && (target.closest('img') || target.closest('p, span, h1, h2, h3, h4, h5, h6, div, label, button, a, li'))) {
+        event.preventDefault();
+      }
+    });
+
+    document.addEventListener('keydown', (event) => {
+      const key = event.key.toLowerCase();
+      const ctrlOrMeta = event.ctrlKey || event.metaKey;
+
+      if (event.key === 'PrintScreen' || key === 'snapshot') {
+        event.preventDefault();
+        return;
+      }
+
+      if (ctrlOrMeta && (key === 'c' || key === 's' || key === 'p' || key === 'u' || key === 'j' || key === 'i' || key === 'k')) {
+        event.preventDefault();
+      }
+
+      if (ctrlOrMeta && event.shiftKey && (key === 'i' || key === 'c' || key === 'j' || key === 'k')) {
+        event.preventDefault();
+      }
+
+      if (event.key === 'F12' || event.key === 'F11') {
+        event.preventDefault();
+      }
+    });
+
+    document.addEventListener('selectstart', (event) => {
+      const target = event.target;
+      if (target && target.closest && target.closest('p, span, h1, h2, h3, h4, h5, h6, div, label, button, a, li, img')) {
         event.preventDefault();
       }
     });
