@@ -477,72 +477,212 @@
       <!-- 3. ANALYTICS VIEW -->
       <main id="AnalyticsView" class="tab-view p-4 sm:p-6 lg:p-8 space-y-6">
         <div class="animate-item glass-card rounded-3xl p-6 border-t-4 border-t-[#c6dd73]">
-          <h3 class="font-bold text-xl sm:text-2xl text-[#183126]">Analytics Sensor Real-Time</h3>
-          <p class="text-xs text-[#66766c] mt-1">Analisis mendalam tren data dari sensor Suhu (DS18B20) dan Keasaman (pH) selama siklus pengolahan.</p>
+          <div class="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+            <div>
+              <h3 class="font-bold text-xl sm:text-2xl text-[#183126]">Analytics Sensor Real-Time</h3>
+              <p class="text-xs text-[#66766c] mt-1">Pemantauan parameter utama limbah cair secara live untuk menjaga stabilitas sistem pengolahan.</p>
+            </div>
+            <div class="flex flex-wrap items-center gap-2 text-[10px] font-bold uppercase tracking-wide">
+              <span class="rounded-full bg-[#eaf3d9] px-2.5 py-1 text-[#345c43]">Live stream aktif</span>
+              <span class="rounded-full bg-[#183126] px-2.5 py-1 text-white">Last update 12:45 WIB</span>
+            </div>
+          </div>
         </div>
 
-        <div class="grid gap-6 xl:grid-cols-2">
-          <!-- Grafik Suhu Modern -->
-          <article class="animate-item card-anim bg-white rounded-3xl p-6 shadow-sm border border-[#dce4d8]">
-            <div class="flex items-center justify-between mb-4 border-b border-gray-100 pb-4">
+        <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          <article class="animate-item card-anim bg-white rounded-2xl p-5 shadow-sm border border-[#dce4d8]">
+            <div class="flex items-start justify-between">
               <div>
-                <h4 class="font-bold text-base text-[#183126]">Fluktuasi Suhu Reaktor (°C)</h4>
-                <p class="text-[10px] text-[#66766c] mt-1 uppercase">Sensor DS18B20 (5 Hari Terakhir)</p>
+                <p class="text-[10px] font-bold uppercase tracking-wider text-[#66766c]">Suhu cairan</p>
+                <p class="mt-2 text-3xl font-extrabold text-[#183126]">28.5<span class="text-base font-medium text-[#66766c] ml-1">°C</span></p>
               </div>
-              <div class="p-2 bg-gray-50 rounded-lg"><i data-lucide="thermometer" class="h-5 w-5 text-[#183126]"></i></div>
+              <div class="rounded-xl bg-red-50 p-2.5 text-red-600"><i data-lucide="thermometer" class="h-5 w-5"></i></div>
             </div>
-            
-            <!-- Simulasi Bar Chart -->
-            <div class="mt-6 flex h-48 items-end gap-3 pb-2 px-2 relative">
-              <div class="absolute w-full border-t border-dashed border-red-300 top-[20%] left-0 z-0 flex justify-end">
-                <span class="text-[9px] text-red-500 bg-white px-1 -mt-2 font-bold">Batas Maks (35°C)</span>
+            <p class="mt-4 text-[10px] font-bold text-green-700 bg-green-50 inline-block rounded-md px-2 py-1">Stabil</p>
+          </article>
+
+          <article class="animate-item card-anim bg-white rounded-2xl p-5 shadow-sm border border-[#dce4d8]">
+            <div class="flex items-start justify-between">
+              <div>
+                <p class="text-[10px] font-bold uppercase tracking-wider text-[#66766c]">pH Outlet</p>
+                <p class="mt-2 text-3xl font-extrabold text-[#183126]">6.8</p>
               </div>
-              
-              <div class="h-[60%] flex-1 rounded-t-lg bg-[#e2e8f0] flex flex-col justify-end items-center pb-2 text-[10px] font-bold relative group cursor-pointer hover:bg-[#cbd5e1] transition-colors"><span class="absolute -top-5 text-[9px] text-[#66766c]">Sen</span></div>
-              <div class="h-[65%] flex-1 rounded-t-lg bg-[#cbd5e1] flex flex-col justify-end items-center pb-2 text-[10px] font-bold relative group cursor-pointer hover:bg-[#94a3b8] transition-colors"><span class="absolute -top-5 text-[9px] text-[#66766c]">Sel</span></div>
-              <div class="h-[75%] flex-1 rounded-t-lg bg-[#c6dd73] flex flex-col justify-end items-center pb-2 text-[10px] font-bold relative group cursor-pointer shadow-md"><span class="absolute -top-5 text-[9px] text-[#66766c]">Rab</span></div>
-              <div class="h-[70%] flex-1 rounded-t-lg bg-[#345c43] flex flex-col justify-end items-center pb-2 text-[10px] font-bold relative group cursor-pointer hover:bg-[#1e3e2b] transition-colors"><span class="absolute -top-5 text-[9px] text-[#66766c]">Kam</span></div>
-              <div class="h-[72%] flex-1 rounded-t-lg bg-[#112217] flex flex-col justify-end items-center pb-2 text-[10px] font-bold relative group cursor-pointer hover:bg-black transition-colors"><span class="absolute -top-5 text-[9px] text-[#66766c]">Jum</span></div>
+              <div class="rounded-xl bg-green-50 p-2.5 text-green-700"><i data-lucide="activity" class="h-5 w-5"></i></div>
+            </div>
+            <p class="mt-4 text-[10px] font-bold text-green-700 bg-green-50 inline-block rounded-md px-2 py-1">Netral</p>
+          </article>
+
+          <article class="animate-item card-anim bg-white rounded-2xl p-5 shadow-sm border border-[#dce4d8]">
+            <div class="flex items-start justify-between">
+              <div>
+                <p class="text-[10px] font-bold uppercase tracking-wider text-[#66766c]">Debit air</p>
+                <p class="mt-2 text-3xl font-extrabold text-[#183126]">1.9<span class="text-base font-medium text-[#66766c] ml-1">m³/h</span></p>
+              </div>
+              <div class="rounded-xl bg-blue-50 p-2.5 text-blue-700"><i data-lucide="droplets" class="h-5 w-5"></i></div>
+            </div>
+            <p class="mt-4 text-[10px] font-bold text-blue-700 bg-blue-50 inline-block rounded-md px-2 py-1">Normal</p>
+          </article>
+
+          <article class="animate-item card-anim rounded-2xl bg-[#112217] p-5 text-white shadow-md">
+            <div class="flex items-start justify-between">
+              <div>
+                <p class="text-[10px] font-bold uppercase tracking-wider text-[#dce7d8]">Pompa sirkulasi</p>
+                <p class="mt-2 text-2xl font-extrabold">ON</p>
+              </div>
+              <div class="rounded-xl bg-white/10 p-2.5 text-[#c6dd73]"><i data-lucide="zap" class="h-5 w-5"></i></div>
+            </div>
+            <p class="mt-4 text-[10px] font-bold text-[#112217] bg-[#c6dd73] inline-block rounded-md px-2 py-1">Otomatis aktif</p>
+          </article>
+        </div>
+
+        <div class="grid gap-6 xl:grid-cols-[1.6fr_1fr]">
+          <article class="animate-item bg-white rounded-3xl p-6 shadow-sm border border-[#dce4d8]">
+            <div class="flex items-center justify-between mb-5">
+              <div>
+                <h4 class="font-bold text-base text-[#183126]">Trend Sensor 24 Jam Terakhir</h4>
+                <p class="text-[10px] text-[#66766c] mt-1 uppercase">Realtime monitoring suhu & pH</p>
+              </div>
+              <div class="rounded-lg bg-[#f4f7ef] px-2.5 py-1 text-[10px] font-bold text-[#183126]">+2.4% dibanding kemarin</div>
+            </div>
+
+            <div class="relative overflow-hidden rounded-2xl border border-[#edf0e9] bg-gradient-to-br from-[#f8faf7] via-white to-[#f1f5ee] p-4">
+              <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(198,221,115,0.18),_transparent_40%)]"></div>
+              <svg viewBox="0 0 700 220" class="relative z-10 h-56 w-full" preserveAspectRatio="none" aria-label="Grafik sensor real time">
+                <defs>
+                  <linearGradient id="lineTemp" x1="0%" x2="100%" y1="0%" y2="0%">
+                    <stop offset="0%" stop-color="#345c43"/>
+                    <stop offset="100%" stop-color="#c6dd73"/>
+                  </linearGradient>
+                  <linearGradient id="linePh" x1="0%" x2="100%" y1="0%" y2="0%">
+                    <stop offset="0%" stop-color="#eab308"/>
+                    <stop offset="100%" stop-color="#22c55e"/>
+                  </linearGradient>
+                </defs>
+                <g stroke="#dfe7dc" stroke-width="1">
+                  <line x1="0" y1="30" x2="700" y2="30"/>
+                  <line x1="0" y1="80" x2="700" y2="80"/>
+                  <line x1="0" y1="130" x2="700" y2="130"/>
+                  <line x1="0" y1="180" x2="700" y2="180"/>
+                </g>
+                <path d="M0,156 C80,150, 120,120, 160,118 S260,80, 300,92 S390,140, 440,126 S540,60, 610,68 S670,42,700,58" fill="none" stroke="url(#lineTemp)" stroke-width="4" stroke-linecap="round"/>
+                <path d="M0,176 C80,168, 120,150, 160,148 S260,138, 300,125 S390,150, 440,142 S540,120, 610,110 S670,100,700,90" fill="none" stroke="url(#linePh)" stroke-width="4" stroke-linecap="round" opacity="0.9"/>
+                <g fill="#183126" font-size="10" font-family="sans-serif">
+                  <text x="0" y="210">00:00</text>
+                  <text x="145" y="210">06:00</text>
+                  <text x="290" y="210">12:00</text>
+                  <text x="440" y="210">18:00</text>
+                  <text x="620" y="210">24:00</text>
+                </g>
+              </svg>
             </div>
           </article>
 
-          <!-- Pergerakan pH -->
-          <article class="animate-item card-anim bg-white rounded-3xl p-6 shadow-sm border border-[#dce4d8] flex flex-col">
-            <div class="flex items-center justify-between mb-4 border-b border-gray-100 pb-4">
+          <article class="animate-item bg-white rounded-3xl p-6 shadow-sm border border-[#dce4d8]">
+            <div class="flex items-center justify-between mb-5">
               <div>
-                <h4 class="font-bold text-base text-[#183126]">Tren Kestabilan pH Air</h4>
-                <p class="text-[10px] text-[#66766c] mt-1 uppercase">Siklus Keasaman (Inlet - Outlet)</p>
+                <h4 class="font-bold text-base text-[#183126]">Status Sensor</h4>
+                <p class="text-[10px] text-[#66766c] mt-1 uppercase">health monitoring</p>
               </div>
-              <div class="p-2 bg-gray-50 rounded-lg"><i data-lucide="activity" class="h-5 w-5 text-[#183126]"></i></div>
+              <span class="rounded-full bg-[#eaf3d9] px-2 py-1 text-[10px] font-bold text-[#345c43]">Normal</span>
             </div>
-            
-            <div class="flex-1 flex flex-col justify-center space-y-4 text-xs mt-2">
-              <div class="rounded-2xl border border-amber-200 bg-white p-4 flex justify-between items-center shadow-sm hover:shadow-md transition">
-                <div>
-                  <span class="font-bold text-[#183126] text-sm">Titik Inlet Awal</span>
-                  <p class="text-[10px] text-[#66766c] mt-1">Kandungan organik tinggi (Darah, lemak)</p>
-                </div>
-                <strong class="text-amber-700 bg-amber-50 px-3 py-1.5 rounded-lg text-sm">pH 6.2 (Asam)</strong>
-              </div>
-              
-              <div class="flex justify-center -my-1"><div class="h-4 w-px bg-gray-200"></div></div>
 
-              <div class="rounded-2xl border border-green-200 bg-white p-4 flex justify-between items-center shadow-sm hover:shadow-md transition">
-                <div>
-                  <span class="font-bold text-[#183126] text-sm">Proses Biofilter Aktif</span>
-                  <p class="text-[10px] text-[#66766c] mt-1">Penguraian oleh mikroorganisme stabil</p>
+            <div class="space-y-4">
+              <div class="rounded-2xl border border-[#edf0e9] bg-[#f9faf8] p-3">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-bold text-[#183126]">Sensor Suhu</span>
+                  <span class="rounded-full bg-green-50 px-2 py-0.5 text-[10px] font-bold text-green-700">OK</span>
                 </div>
-                <strong class="text-green-700 bg-green-50 px-3 py-1.5 rounded-lg text-sm">pH 6.8 (Normal)</strong>
+                <p class="mt-2 text-2xl font-extrabold text-[#183126]">28.5<span class="text-sm font-medium text-[#66766c] ml-1">°C</span></p>
               </div>
 
-              <div class="flex justify-center -my-1"><div class="h-4 w-px bg-green-200"></div></div>
-
-              <div class="rounded-2xl border-2 border-[#183126] bg-white p-4 flex justify-between items-center shadow-md hover:shadow-lg transition transform hover:-translate-y-1">
-                <div>
-                  <span class="font-bold text-[#183126] text-sm">Titik Outlet Akhir</span>
-                  <p class="text-[10px] text-[#66766c] mt-1">Air netral & aman dialirkan ke lingkungan</p>
+              <div class="rounded-2xl border border-[#edf0e9] bg-[#f9faf8] p-3">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-bold text-[#183126]">Sensor pH</span>
+                  <span class="rounded-full bg-green-50 px-2 py-0.5 text-[10px] font-bold text-green-700">OK</span>
                 </div>
-                <strong class="text-white bg-[#183126] px-3 py-1.5 rounded-lg text-sm shadow">pH 7.2 (Netral)</strong>
+                <p class="mt-2 text-2xl font-extrabold text-[#183126]">6.8</p>
+              </div>
+
+              <div class="rounded-2xl border border-[#edf0e9] bg-[#f9faf8] p-3">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-bold text-[#183126]">Alarm</span>
+                  <span class="rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-bold text-amber-700">Watch</span>
+                </div>
+                <p class="mt-2 text-xs leading-relaxed text-[#66766c]">Tidak ada alarm aktif. Sistem aman untuk operasi lanjutan.</p>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <div class="grid gap-6 xl:grid-cols-2">
+          <article class="animate-item bg-white rounded-3xl p-6 shadow-sm border border-[#dce4d8]">
+            <div class="flex items-center justify-between mb-5">
+              <h4 class="font-bold text-base text-[#183126]">Perbandingan Parameter</h4>
+              <span class="text-[10px] font-bold uppercase tracking-wider text-[#66766c]">30 menit terakhir</span>
+            </div>
+
+            <div class="space-y-4">
+              <div>
+                <div class="mb-2 flex items-center justify-between text-[11px] font-bold text-[#183126]">
+                  <span>Temperatur</span>
+                  <span>28.5°C</span>
+                </div>
+                <div class="h-2.5 rounded-full bg-[#edf1ec]">
+                  <div class="h-2.5 rounded-full bg-[#345c43]" style="width: 72%"></div>
+                </div>
+              </div>
+
+              <div>
+                <div class="mb-2 flex items-center justify-between text-[11px] font-bold text-[#183126]">
+                  <span>Kestabilan pH</span>
+                  <span>6.8</span>
+                </div>
+                <div class="h-2.5 rounded-full bg-[#edf1ec]">
+                  <div class="h-2.5 rounded-full bg-[#c6dd73]" style="width: 84%"></div>
+                </div>
+              </div>
+
+              <div>
+                <div class="mb-2 flex items-center justify-between text-[11px] font-bold text-[#183126]">
+                  <span>Debit Air</span>
+                  <span>1.9 m³/h</span>
+                </div>
+                <div class="h-2.5 rounded-full bg-[#edf1ec]">
+                  <div class="h-2.5 rounded-full bg-[#1e3e2b]" style="width: 68%"></div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="animate-item bg-white rounded-3xl p-6 shadow-sm border border-[#dce4d8]">
+            <div class="flex items-center justify-between mb-5">
+              <h4 class="font-bold text-base text-[#183126]">Aktivitas Sistem</h4>
+              <span class="text-[10px] font-bold uppercase tracking-wider text-[#66766c]">Hari ini</span>
+            </div>
+
+            <div class="space-y-4">
+              <div class="flex gap-3">
+                <span class="mt-1 flex h-7 w-7 items-center justify-center rounded-full bg-[#eaf3d9] text-[#345c43]"><i data-lucide="zap" class="h-3.5 w-3.5"></i></span>
+                <div>
+                  <p class="text-xs font-bold text-[#183126]">Pompa sirkulasi aktif</p>
+                  <p class="text-[10px] text-[#66766c]">12:35 WIB</p>
+                </div>
+              </div>
+
+              <div class="flex gap-3">
+                <span class="mt-1 flex h-7 w-7 items-center justify-center rounded-full bg-blue-50 text-blue-700"><i data-lucide="droplets" class="h-3.5 w-3.5"></i></span>
+                <div>
+                  <p class="text-xs font-bold text-[#183126]">Kenaikan debit air stabil</p>
+                  <p class="text-[10px] text-[#66766c]">12:10 WIB</p>
+                </div>
+              </div>
+
+              <div class="flex gap-3">
+                <span class="mt-1 flex h-7 w-7 items-center justify-center rounded-full bg-amber-50 text-amber-700"><i data-lucide="alert-triangle" class="h-3.5 w-3.5"></i></span>
+                <div>
+                  <p class="text-xs font-bold text-[#183126]">Peringatan teratasi otomatis</p>
+                  <p class="text-[10px] text-[#66766c]">11:50 WIB</p>
+                </div>
               </div>
             </div>
           </article>
