@@ -379,19 +379,19 @@
           <div class="grid grid-cols-1 md:grid-cols-3 gap-5 text-sm">
             <div>
               <label class="block font-bold text-[#183126] mb-2 text-xs">Tanggal mulai</label>
-              <input type="date" value="2026-09-26" class="custom-input w-full rounded-xl border border-[#dce4d8] px-4 py-3 bg-white text-[#183126] font-medium shadow-sm transition hover:border-[#183126]">
+              <input id="reportStartDate" type="date" value="2026-09-26" class="custom-input w-full rounded-xl border border-[#dce4d8] px-4 py-3 bg-white text-[#183126] font-medium shadow-sm transition hover:border-[#183126]">
             </div>
             <div>
               <label class="block font-bold text-[#183126] mb-2 text-xs">Tanggal akhir</label>
-              <input type="date" value="2026-10-01" class="custom-input w-full rounded-xl border border-[#dce4d8] px-4 py-3 bg-white text-[#183126] font-medium shadow-sm transition hover:border-[#183126]">
+              <input id="reportEndDate" type="date" value="2026-10-01" class="custom-input w-full rounded-xl border border-[#dce4d8] px-4 py-3 bg-white text-[#183126] font-medium shadow-sm transition hover:border-[#183126]">
             </div>
             <div>
               <label class="block font-bold text-[#183126] mb-2 text-xs">Parameter</label>
-              <select class="custom-select w-full rounded-xl border border-[#dce4d8] px-4 py-3 bg-white text-[#183126] font-medium shadow-sm transition hover:border-[#183126] cursor-pointer">
-                <option>Semua (Suhu, pH, Waktu)</option>
-                <option>Suhu Air (°C)</option>
-                <option>Keasaman (pH)</option>
-                <option>Durasi Tahap</option>
+              <select id="reportParamSelect" class="custom-select w-full rounded-xl border border-[#dce4d8] px-4 py-3 bg-white text-[#183126] font-medium shadow-sm transition hover:border-[#183126] cursor-pointer">
+                <option value="all">Semua (Suhu, pH, Waktu)</option>
+                <option value="temp">Suhu Air (°C)</option>
+                <option value="ph">Keasaman (pH)</option>
+                <option value="duration">Durasi Tahap</option>
               </select>
             </div>
           </div>
@@ -400,9 +400,10 @@
         <div class="animate-item glass-card rounded-3xl p-6 space-y-4">
           <div class="flex flex-wrap items-center justify-between gap-4">
             <h4 class="font-bold text-lg text-[#183126]">Riwayat Data Sensor</h4>
-            <button onclick="showToast('Mengunduh log data sesuai rentang tanggal yang dipilih...')" class="rounded-xl bg-white border border-[#dce4d8] text-[#183126] px-4 py-2 text-xs font-bold shadow-sm hover:bg-[#f1f4ea] transition flex items-center gap-2">
-              <i data-lucide="download" class="h-4 w-4"></i> Export Log
-            </button>
+            <div class="flex gap-2">
+              <button id="resetReportFilter" type="button" class="rounded-xl border border-[#dce4d8] bg-white text-[#183126] px-4 py-2 text-xs font-bold shadow-sm hover:bg-[#f1f4ea] transition">Reset</button>
+              <button id="applyReportFilter" type="button" class="rounded-xl bg-[#112217] text-white px-4 py-2 text-xs font-bold shadow-sm hover:bg-[#1a3a27] transition">Terapkan</button>
+            </div>
           </div>
 
           <div class="overflow-x-auto rounded-xl border border-[#dce4d8]">
@@ -417,56 +418,7 @@
                   <th class="p-4 font-bold text-right">Status</th>
                 </tr>
               </thead>
-              <tbody class="divide-y divide-[#dce4d8] bg-white">
-                <tr class="hover:bg-gray-50 transition">
-                  <td class="p-4 font-medium text-[#183126]">2026-09-26</td>
-                  <td class="p-4 font-medium text-[#183126]">08:00</td>
-                  <td class="p-4 text-[#183126] font-bold">28.5</td>
-                  <td class="p-4 text-[#183126] font-bold">6.8</td>
-                  <td class="p-4 text-[#66766c]">18 Jam</td>
-                  <td class="p-4 text-right"><span class="rounded-md bg-green-100 text-green-800 px-2.5 py-1 text-[10px] font-bold">Normal</span></td>
-                </tr>
-                <tr class="hover:bg-gray-50 transition">
-                  <td class="p-4 font-medium text-[#183126]">2026-09-27</td>
-                  <td class="p-4 font-medium text-[#183126]">12:30</td>
-                  <td class="p-4 text-[#183126] font-bold">29.1</td>
-                  <td class="p-4 text-[#183126] font-bold">6.7</td>
-                  <td class="p-4 text-[#66766c]">14 Jam</td>
-                  <td class="p-4 text-right"><span class="rounded-md bg-green-100 text-green-800 px-2.5 py-1 text-[10px] font-bold">Normal</span></td>
-                </tr>
-                <tr class="hover:bg-gray-50 transition">
-                  <td class="p-4 font-medium text-[#183126]">2026-09-28</td>
-                  <td class="p-4 font-medium text-[#183126]">16:45</td>
-                  <td class="p-4 text-[#183126] font-bold">29.4</td>
-                  <td class="p-4 text-[#183126] font-bold">6.5</td>
-                  <td class="p-4 text-[#66766c]">10 Jam</td>
-                  <td class="p-4 text-right"><span class="rounded-md bg-amber-100 text-amber-800 px-2.5 py-1 text-[10px] font-bold">Waspada</span></td>
-                </tr>
-                <tr class="hover:bg-gray-50 transition">
-                  <td class="p-4 font-medium text-[#183126]">2026-09-29</td>
-                  <td class="p-4 font-medium text-[#183126]">09:15</td>
-                  <td class="p-4 text-[#183126] font-bold">28.7</td>
-                  <td class="p-4 text-[#183126] font-bold">6.8</td>
-                  <td class="p-4 text-[#66766c]">7 Jam</td>
-                  <td class="p-4 text-right"><span class="rounded-md bg-green-100 text-green-800 px-2.5 py-1 text-[10px] font-bold">Normal</span></td>
-                </tr>
-                <tr class="hover:bg-gray-50 transition">
-                  <td class="p-4 font-medium text-[#183126]">2026-09-30</td>
-                  <td class="p-4 font-medium text-[#183126]">20:00</td>
-                  <td class="p-4 text-[#183126] font-bold">28.2</td>
-                  <td class="p-4 text-[#183126] font-bold">6.9</td>
-                  <td class="p-4 text-[#66766c]">3 Jam</td>
-                  <td class="p-4 text-right"><span class="rounded-md bg-blue-100 text-blue-800 px-2.5 py-1 text-[10px] font-bold">Siklus baru</span></td>
-                </tr>
-                <tr class="hover:bg-gray-50 transition">
-                  <td class="p-4 font-medium text-[#183126]">2026-10-01</td>
-                  <td class="p-4 font-medium text-[#183126]">07:45</td>
-                  <td class="p-4 text-[#183126] font-bold">28.4</td>
-                  <td class="p-4 text-[#183126] font-bold">6.8</td>
-                  <td class="p-4 text-[#66766c]">1 Jam</td>
-                  <td class="p-4 text-right"><span class="rounded-md bg-green-100 text-green-800 px-2.5 py-1 text-[10px] font-bold">Normal</span></td>
-                </tr>
-              </tbody>
+              <tbody id="reportTableBody" class="divide-y divide-[#dce4d8] bg-white"></tbody>
             </table>
           </div>
         </div>
@@ -1110,6 +1062,89 @@
         inp.value = newVal;
       }
     }
+
+    const reportRecords = [
+      { date: '2026-09-26', time: '08:00', temp: 28.5, ph: 6.8, duration: '18 Jam', status: 'Normal', statusClass: 'bg-green-100 text-green-800' },
+      { date: '2026-09-27', time: '12:30', temp: 29.1, ph: 6.7, duration: '14 Jam', status: 'Normal', statusClass: 'bg-green-100 text-green-800' },
+      { date: '2026-09-28', time: '16:45', temp: 29.4, ph: 6.5, duration: '10 Jam', status: 'Waspada', statusClass: 'bg-amber-100 text-amber-800' },
+      { date: '2026-09-29', time: '09:15', temp: 28.7, ph: 6.8, duration: '7 Jam', status: 'Normal', statusClass: 'bg-green-100 text-green-800' },
+      { date: '2026-09-30', time: '20:00', temp: 28.2, ph: 6.9, duration: '3 Jam', status: 'Siklus baru', statusClass: 'bg-blue-100 text-blue-800' },
+      { date: '2026-10-01', time: '07:45', temp: 28.4, ph: 6.8, duration: '1 Jam', status: 'Normal', statusClass: 'bg-green-100 text-green-800' }
+    ];
+
+    function renderReportTable() {
+      const startInput = document.getElementById('reportStartDate');
+      const endInput = document.getElementById('reportEndDate');
+      const paramSelect = document.getElementById('reportParamSelect');
+      const tableBody = document.getElementById('reportTableBody');
+      if (!tableBody || !startInput || !endInput || !paramSelect) return;
+
+      const startDate = startInput.value ? new Date(startInput.value + 'T00:00:00') : null;
+      const endDate = endInput.value ? new Date(endInput.value + 'T23:59:59') : null;
+      const selectedParam = paramSelect.value;
+
+      const filtered = reportRecords.filter(record => {
+        const recordDate = new Date(record.date + 'T00:00:00');
+        if (startDate && recordDate < startDate) return false;
+        if (endDate && recordDate > endDate) return false;
+        return true;
+      });
+
+      const rows = filtered.map(record => {
+        const commonCols = `
+          <td class="p-4 text-[#183126] font-bold">${record.temp.toFixed(1)}</td>
+          <td class="p-4 text-[#183126] font-bold">${record.ph.toFixed(1)}</td>
+          <td class="p-4 text-[#66766c]">${record.duration}</td>
+        `;
+
+        let rowColumns = commonCols;
+        if (selectedParam === 'temp') {
+          rowColumns = `<td class="p-4 text-[#183126] font-bold">${record.temp.toFixed(1)}</td><td class="p-4 text-[#66766c]">—</td><td class="p-4 text-[#66766c]">—</td>`;
+        } else if (selectedParam === 'ph') {
+          rowColumns = `<td class="p-4 text-[#66766c]">—</td><td class="p-4 text-[#183126] font-bold">${record.ph.toFixed(1)}</td><td class="p-4 text-[#66766c]">—</td>`;
+        } else if (selectedParam === 'duration') {
+          rowColumns = `<td class="p-4 text-[#66766c]">—</td><td class="p-4 text-[#66766c]">—</td><td class="p-4 text-[#66766c]">${record.duration}</td>`;
+        }
+
+        return `
+          <tr class="hover:bg-gray-50 transition">
+            <td class="p-4 font-medium text-[#183126]">${record.date}</td>
+            <td class="p-4 font-medium text-[#183126]">${record.time}</td>
+            ${rowColumns}
+            <td class="p-4 text-right"><span class="rounded-md ${record.statusClass} px-2.5 py-1 text-[10px] font-bold">${record.status}</span></td>
+          </tr>
+        `;
+      }).join('');
+
+      if (!filtered.length) {
+        tableBody.innerHTML = `
+          <tr>
+            <td colspan="6" class="p-6 text-center text-[#66766c] font-medium">Tidak ada data yang sesuai dengan rentang tanggal dan parameter yang dipilih.</td>
+          </tr>
+        `;
+        return;
+      }
+
+      tableBody.innerHTML = rows;
+    }
+
+    function resetReportFilter() {
+      const startInput = document.getElementById('reportStartDate');
+      const endInput = document.getElementById('reportEndDate');
+      const paramSelect = document.getElementById('reportParamSelect');
+      if (startInput) startInput.value = '2026-09-26';
+      if (endInput) endInput.value = '2026-10-01';
+      if (paramSelect) paramSelect.value = 'all';
+      renderReportTable();
+    }
+
+    document.getElementById('applyReportFilter').onclick = renderReportTable;
+    document.getElementById('resetReportFilter').onclick = resetReportFilter;
+    ['reportStartDate', 'reportEndDate', 'reportParamSelect'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener('change', renderReportTable);
+    });
+    renderReportTable();
 
     function animateAnalyticsCharts() {
       const tempPath = document.getElementById('analyticsTempPath');
