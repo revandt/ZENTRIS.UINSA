@@ -374,103 +374,101 @@
       <main id="ReportsView" class="tab-view p-4 sm:p-6 lg:p-8 space-y-6">
         <div class="animate-item glass-card rounded-3xl p-6 shadow-sm border-t-4 border-t-[#183126]">
           <h3 class="font-bold text-xl sm:text-2xl text-[#183126]">Data Sensor Laporan Limbah</h3>
-          <p class="text-xs text-[#66766c] mt-1 mb-6">Tinjau rekapitulasi data sensor (Suhu, pH, Waktu) dan catat data tambahan ke Spreadsheets terintegrasi.</p>
-          
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 text-sm">
+          <p class="text-xs text-[#66766c] mt-1 mb-6">Riwayat data sensor reaktor berdasarkan tanggal yang tercatat. Pilih rentang tanggal tertentu untuk melihat rekam jejak operasional.</p>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-5 text-sm">
             <div>
-              <label class="block font-bold text-[#183126] mb-2 text-xs">Pilih Periode Laporan</label>
-              <select class="custom-select w-full rounded-xl border border-[#dce4d8] px-4 py-3 bg-white text-[#183126] font-medium shadow-sm transition hover:border-[#183126] cursor-pointer">
-                <option>Hari ini</option>
-                <option>7 Hari Terakhir</option>
-                <option>Bulan ini</option>
-              </select>
+              <label class="block font-bold text-[#183126] mb-2 text-xs">Tanggal mulai</label>
+              <input type="date" value="2026-09-26" class="custom-input w-full rounded-xl border border-[#dce4d8] px-4 py-3 bg-white text-[#183126] font-medium shadow-sm transition hover:border-[#183126]">
             </div>
             <div>
-              <label class="block font-bold text-[#183126] mb-2 text-xs">Pilih Parameter Tampil</label>
+              <label class="block font-bold text-[#183126] mb-2 text-xs">Tanggal akhir</label>
+              <input type="date" value="2026-10-01" class="custom-input w-full rounded-xl border border-[#dce4d8] px-4 py-3 bg-white text-[#183126] font-medium shadow-sm transition hover:border-[#183126]">
+            </div>
+            <div>
+              <label class="block font-bold text-[#183126] mb-2 text-xs">Parameter</label>
               <select class="custom-select w-full rounded-xl border border-[#dce4d8] px-4 py-3 bg-white text-[#183126] font-medium shadow-sm transition hover:border-[#183126] cursor-pointer">
                 <option>Semua (Suhu, pH, Waktu)</option>
-                <option>Hanya Suhu (°C)</option>
-                <option>Hanya Keasaman (pH)</option>
+                <option>Suhu Air (°C)</option>
+                <option>Keasaman (pH)</option>
+                <option>Durasi Tahap</option>
               </select>
             </div>
           </div>
         </div>
 
-        <!-- Tabel Riwayat Data Otomatis -->
         <div class="animate-item glass-card rounded-3xl p-6 space-y-4">
           <div class="flex flex-wrap items-center justify-between gap-4">
-            <h4 class="font-bold text-lg text-[#183126]">Log Sensor Otomatis</h4>
-            <button onclick="showToast('Mengunduh Log Data ke format Excel...')" class="rounded-xl bg-white border border-[#dce4d8] text-[#183126] px-4 py-2 text-xs font-bold shadow-sm hover:bg-[#f1f4ea] transition flex items-center gap-2">
+            <h4 class="font-bold text-lg text-[#183126]">Riwayat Data Sensor</h4>
+            <button onclick="showToast('Mengunduh log data sesuai rentang tanggal yang dipilih...')" class="rounded-xl bg-white border border-[#dce4d8] text-[#183126] px-4 py-2 text-xs font-bold shadow-sm hover:bg-[#f1f4ea] transition flex items-center gap-2">
               <i data-lucide="download" class="h-4 w-4"></i> Export Log
             </button>
           </div>
+
           <div class="overflow-x-auto rounded-xl border border-[#dce4d8]">
             <table class="w-full text-left text-xs whitespace-nowrap">
               <thead class="bg-[#f8faf6] text-[#66766c] border-b border-[#dce4d8]">
                 <tr>
-                  <th class="p-4 font-bold">Waktu (WIB)</th>
+                  <th class="p-4 font-bold">Tanggal</th>
+                  <th class="p-4 font-bold">Waktu</th>
                   <th class="p-4 font-bold">Suhu Air (°C)</th>
                   <th class="p-4 font-bold">Keasaman (pH)</th>
                   <th class="p-4 font-bold">Durasi Tahap</th>
-                  <th class="p-4 font-bold text-right">Status Sistem</th>
+                  <th class="p-4 font-bold text-right">Status</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-[#dce4d8] bg-white">
                 <tr class="hover:bg-gray-50 transition">
-                  <td class="p-4 font-medium text-[#183126]">Hari ini, 08:00</td>
+                  <td class="p-4 font-medium text-[#183126]">2026-09-26</td>
+                  <td class="p-4 font-medium text-[#183126]">08:00</td>
                   <td class="p-4 text-[#183126] font-bold">28.5</td>
                   <td class="p-4 text-[#183126] font-bold">6.8</td>
                   <td class="p-4 text-[#66766c]">18 Jam</td>
-                  <td class="p-4 text-right"><span class="rounded-md bg-green-100 text-green-800 px-2.5 py-1 text-[10px] font-bold">Berjalan</span></td>
+                  <td class="p-4 text-right"><span class="rounded-md bg-green-100 text-green-800 px-2.5 py-1 text-[10px] font-bold">Normal</span></td>
                 </tr>
                 <tr class="hover:bg-gray-50 transition">
-                  <td class="p-4 font-medium text-[#183126]">Kemarin, 20:00</td>
-                  <td class="p-4 text-[#183126] font-bold">28.3</td>
+                  <td class="p-4 font-medium text-[#183126]">2026-09-27</td>
+                  <td class="p-4 font-medium text-[#183126]">12:30</td>
+                  <td class="p-4 text-[#183126] font-bold">29.1</td>
+                  <td class="p-4 text-[#183126] font-bold">6.7</td>
+                  <td class="p-4 text-[#66766c]">14 Jam</td>
+                  <td class="p-4 text-right"><span class="rounded-md bg-green-100 text-green-800 px-2.5 py-1 text-[10px] font-bold">Normal</span></td>
+                </tr>
+                <tr class="hover:bg-gray-50 transition">
+                  <td class="p-4 font-medium text-[#183126]">2026-09-28</td>
+                  <td class="p-4 font-medium text-[#183126]">16:45</td>
+                  <td class="p-4 text-[#183126] font-bold">29.4</td>
                   <td class="p-4 text-[#183126] font-bold">6.5</td>
-                  <td class="p-4 text-[#66766c]">6 Jam</td>
-                  <td class="p-4 text-right"><span class="rounded-md bg-green-100 text-green-800 px-2.5 py-1 text-[10px] font-bold">Berjalan</span></td>
+                  <td class="p-4 text-[#66766c]">10 Jam</td>
+                  <td class="p-4 text-right"><span class="rounded-md bg-amber-100 text-amber-800 px-2.5 py-1 text-[10px] font-bold">Waspada</span></td>
                 </tr>
                 <tr class="hover:bg-gray-50 transition">
-                  <td class="p-4 font-medium text-[#183126]">Kemarin, 14:00</td>
-                  <td class="p-4 text-[#183126] font-bold">28.0</td>
-                  <td class="p-4 text-[#183126] font-bold">6.2</td>
-                  <td class="p-4 text-[#66766c]">0 Jam (Mulai)</td>
-                  <td class="p-4 text-right"><span class="rounded-md bg-blue-100 text-blue-800 px-2.5 py-1 text-[10px] font-bold">Siklus Baru</span></td>
+                  <td class="p-4 font-medium text-[#183126]">2026-09-29</td>
+                  <td class="p-4 font-medium text-[#183126]">09:15</td>
+                  <td class="p-4 text-[#183126] font-bold">28.7</td>
+                  <td class="p-4 text-[#183126] font-bold">6.8</td>
+                  <td class="p-4 text-[#66766c]">7 Jam</td>
+                  <td class="p-4 text-right"><span class="rounded-md bg-green-100 text-green-800 px-2.5 py-1 text-[10px] font-bold">Normal</span></td>
+                </tr>
+                <tr class="hover:bg-gray-50 transition">
+                  <td class="p-4 font-medium text-[#183126]">2026-09-30</td>
+                  <td class="p-4 font-medium text-[#183126]">20:00</td>
+                  <td class="p-4 text-[#183126] font-bold">28.2</td>
+                  <td class="p-4 text-[#183126] font-bold">6.9</td>
+                  <td class="p-4 text-[#66766c]">3 Jam</td>
+                  <td class="p-4 text-right"><span class="rounded-md bg-blue-100 text-blue-800 px-2.5 py-1 text-[10px] font-bold">Siklus baru</span></td>
+                </tr>
+                <tr class="hover:bg-gray-50 transition">
+                  <td class="p-4 font-medium text-[#183126]">2026-10-01</td>
+                  <td class="p-4 font-medium text-[#183126]">07:45</td>
+                  <td class="p-4 text-[#183126] font-bold">28.4</td>
+                  <td class="p-4 text-[#183126] font-bold">6.8</td>
+                  <td class="p-4 text-[#66766c]">1 Jam</td>
+                  <td class="p-4 text-right"><span class="rounded-md bg-green-100 text-green-800 px-2.5 py-1 text-[10px] font-bold">Normal</span></td>
                 </tr>
               </tbody>
             </table>
           </div>
-        </div>
-
-        <!-- Form Input Manual Integrasi Spreadsheet -->
-        <div class="animate-item card-anim rounded-3xl bg-white p-6 shadow-md border border-[#dce4d8]">
-          <div class="mb-4">
-            <h4 class="font-bold text-lg text-[#183126]">Input Catatan Manual (Sync to Spreadsheet)</h4>
-            <p class="text-xs text-[#66766c] mt-1">Tambahkan catatan observasi manual di luar data sensor otomatis (misal: warna air, bau, dll).</p>
-          </div>
-          <form onsubmit="event.preventDefault(); showToast('Data berhasil dikirim dan tersinkronisasi ke Google Spreadsheets!'); this.reset();" class="space-y-4">
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label class="block font-bold text-[#183126] mb-1.5 text-xs">Petugas / Operator</label>
-                <input type="text" placeholder="Nama Anda" required class="custom-input w-full rounded-xl border border-[#dce4d8] px-4 py-3 bg-slate-50 text-sm transition">
-              </div>
-              <div>
-                <label class="block font-bold text-[#183126] mb-1.5 text-xs">Tahap Reaktor</label>
-                <select class="custom-select w-full rounded-xl border border-[#dce4d8] px-4 py-3 bg-slate-50 text-sm transition cursor-pointer">
-                  <option>Biofilter</option>
-                  <option>Fitoremediasi</option>
-                  <option>Bak Penampung Awal</option>
-                </select>
-              </div>
-            </div>
-            <div>
-              <label class="block font-bold text-[#183126] mb-1.5 text-xs">Catatan Observasi (Bau, Warna Air, dll)</label>
-              <textarea placeholder="Contoh: Air tidak berbau menyengat, warna sedikit keruh..." rows="3" class="custom-input w-full rounded-xl border border-[#dce4d8] px-4 py-3 bg-slate-50 text-sm transition"></textarea>
-            </div>
-            <button type="submit" class="w-full sm:w-auto rounded-xl bg-[#112217] text-white px-6 py-3 font-bold shadow-md hover:bg-[#1a3a27] transition flex items-center justify-center gap-2 active:scale-[0.99]">
-              <i data-lucide="cloud-upload" class="h-4 w-4"></i> Simpan & Sinkronisasi
-            </button>
-          </form>
         </div>
       </main>
 
